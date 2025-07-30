@@ -3,7 +3,7 @@ package dao
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"time"
 
 	"gorm.io/driver/mysql"
