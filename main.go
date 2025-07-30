@@ -16,15 +16,15 @@ func main() {
 	//2.初始化DB
 	dao.InitDB()
 
-	//3.初始化Query
-	dao.InitQuery()
-
-	//4.确保最终关闭数据库链接
+	//3.确保最终关闭数据库链接
 	defer func() {
 		db, _ := dao.DB.DB()
 		_ = db.Close()
 		log.Printf("database connection closed")
 	}()
+
+	//4.初始化Query
+	dao.InitQuery()
 
 	//5.启动服务器
 	server.StartServer()
