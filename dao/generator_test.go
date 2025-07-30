@@ -7,6 +7,7 @@ import (
 )
 
 func Test_generate1(t *testing.T) {
+	InitDB()
 	type args struct {
 		db           *gorm.DB
 		tables       []string
@@ -20,7 +21,7 @@ func Test_generate1(t *testing.T) {
 		{
 			name: "生成DAO层、Model代码",
 			args: args{
-				db:           InitDB(),
+				db:           DB,
 				tables:       []string{"system_user"},
 				outPath:      "query/system",
 				modelPkgPath: "../model/system",
