@@ -3,6 +3,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"net-project-edu_manage/handler"
 )
 
 // InitRouter 初始化路由
@@ -28,7 +29,7 @@ func initSystemUserRouter(v *gin.RouterGroup, interceptor gin.HandlerFunc) {
 	systemUsers.Use(interceptor)
 
 	//3.定义接口路由
-	systemUsers.POST("", nil)
+	systemUsers.POST("", handler.AddSystemUser)
 	systemUsers.DELETE("", nil)
 	systemUsers.GET(":id", nil)
 	systemUsers.PUT(":id", nil)

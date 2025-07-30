@@ -37,8 +37,8 @@ func Test_generate1(t *testing.T) {
 			args: args{
 				db:           DB,
 				tables:       []string{"system_user"},
-				outPath:      "query/system",
-				modelPkgPath: "../model/system",
+				outPath:      "query",
+				modelPkgPath: "./model/system",
 			},
 		},
 	}

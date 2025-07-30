@@ -1,5 +1,5 @@
-// @Author:冯铁城 [17615007230@163.com] 2025-07-30 17:27:03
-package _log
+// Package core @Author:冯铁城 [17615007230@163.com] 2025-07-30 17:27:03
+package core
 
 import (
 	log "github.com/sirupsen/logrus"

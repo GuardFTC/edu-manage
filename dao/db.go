@@ -4,6 +4,7 @@ package dao
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"net-project-edu_manage/dao/query"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -22,6 +23,9 @@ var (
 
 // DB 数据库连接
 var DB *gorm.DB
+
+// Q 数据库查询对象
+var Q *query.Query
 
 // InitDB 初始化数据库
 func InitDB() {
@@ -52,4 +56,9 @@ func InitDB() {
 
 	//6.日志打印
 	log.Printf("database connection success")
+}
+
+// InitQuery 初始化查询对象
+func InitQuery() {
+	Q = query.Use(DB)
 }

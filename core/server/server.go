@@ -21,19 +21,22 @@ func StartServer() {
 	//1.创建 Gin 实例
 	router = gin.New()
 
-	//2.使用 Logger 和 Recovery 中间件
+	//2.使用全局异常处理器
+	router.Use(errorHandler())
+
+	//3.使用 Logger 和 Recovery 中间件
 	router.Use(gin.Logger(), gin.Recovery())
 
-	//3.初始化路由组
+	//4.初始化路由组
 	initRouter()
 
-	//4.创建http.Server实例
+	//5.创建http.Server实例
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: router,
 	}
 
-	//5.创建协程启动 HTTP 服务
+	//6.创建协程启动 HTTP 服务
 	go func() {
 		log.Printf("server start success，listen addr：%s", srv.Addr)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -41,7 +44,7 @@ func StartServer() {
 		}
 	}()
 
-	//6.等待中断信号并优雅关闭服务器
+	//7.等待中断信号并优雅关闭服务器
 	waitForShutdown(srv)
 }
 
