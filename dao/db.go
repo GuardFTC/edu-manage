@@ -24,7 +24,7 @@ var (
 var DB *gorm.DB
 
 // InitDB 初始化数据库
-func InitDB() *gorm.DB {
+func InitDB() {
 
 	//1.拼接DSN
 	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?%v", username, password, ip, port, database, dsnConfig)
@@ -32,22 +32,24 @@ func InitDB() *gorm.DB {
 	//2.打开数据库连接
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("database connection error")
+		log.Fatalf("database connection error: %v", err)
 	}
 
-	//3.获取底层sql.DB
-	sqlDB, err := db.DB()
+	//3.DB赋值
+	DB = db
+
+	//4.获取底层sql.DB
+	sqlDB, err := DB.DB()
 	if err != nil {
-		panic("get sql db connection error")
+		log.Fatalf("get sql db connection error: %v", err)
 	}
 
-	//4.设置连接池参数
+	//5.设置连接池参数
 	sqlDB.SetMaxOpenConns(20)                  // 最多20个连接
 	sqlDB.SetMaxIdleConns(10)                  // 最多10个空闲连接
 	sqlDB.SetConnMaxLifetime(1 * time.Minute)  // 每个连接最多用1分钟
 	sqlDB.SetConnMaxIdleTime(30 * time.Second) // 空闲超过30秒就关闭
 
-	//5.返回数据库连接
+	//6.日志打印
 	log.Printf("database connection success")
-	return db
 }
