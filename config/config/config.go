@@ -1,18 +1,17 @@
 // Package core @Author:冯铁城 [17615007230@163.com] 2025-07-31 11:20:26
-package core
+package config
 
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"net-project-edu_manage/config/config"
 )
 
 // Config 配置结构体
 type Config struct {
-	Database config.DatabaseConfig `mapstructure:"database"`
-	Server   config.ServerConfig   `mapstructure:"server"`
-	Log      config.LogConfig      `mapstructure:"log"`
+	Database DatabaseConfig `mapstructure:"database"`
+	Server   ServerConfig   `mapstructure:"server"`
+	Log      LogConfig      `mapstructure:"log"`
 }
 
 // AppConfig 项目总配置

@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 	log "github.com/sirupsen/logrus"
-	"net-project-edu_manage/core"
+	"net-project-edu_manage/config/config"
 	"net-project-edu_manage/handler/router"
 	"net/http"
 	"os"
@@ -25,7 +25,7 @@ func StartServer() {
 
 	//3.创建http.Server实例
 	srv := &http.Server{
-		Addr:    ":" + core.AppConfig.Server.Port,
+		Addr:    ":" + config.AppConfig.Server.Port,
 		Handler: router.Router,
 	}
 
