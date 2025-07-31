@@ -2,7 +2,7 @@
 package main
 
 import (
-	"net-project-edu_manage/config"
+	"net-project-edu_manage/config/config"
 	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/core/server"
 )
