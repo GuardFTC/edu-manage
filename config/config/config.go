@@ -43,23 +43,29 @@ func InitConfig() {
 
 	//6.初始化日志
 	initLog()
+
+	//7.打印配置文件读取日志
+	log.Printf("init config by application-%s.yml", env)
 }
 
 // initEnv 初始化环境变量
 func initEnv() string {
 
-	//1.将配置项 EDU_ENV 绑定到环境变量
+	//1.启用自动绑定
+	viper.AutomaticEnv()
+
+	//2.将配置项 EDU_ENV 绑定到环境变量
 	if err := viper.BindEnv("EDU_ENV"); err != nil {
 		log.Fatalf("bind env error: %v", err)
 	}
 
-	//2.读取EDU_ENV，默认为dev
+	//3.读取EDU_ENV，默认为dev
 	env := viper.GetString("EDU_ENV")
 	if env == "" {
 		env = "dev"
 	}
 
-	//3.返回
+	//4.返回
 	return env
 }
 
