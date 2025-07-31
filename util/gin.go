@@ -3,7 +3,7 @@ package util
 
 import (
 	"github.com/gin-gonic/gin"
-	"net-project-edu_manage/core/res"
+	"net-project-edu_manage/common/res"
 	"strings"
 )
 

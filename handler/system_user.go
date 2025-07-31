@@ -3,9 +3,9 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"net-project-edu_manage/core/res"
+	"net-project-edu_manage/common/res"
 	"net-project-edu_manage/model/dto"
-	system_user "net-project-edu_manage/service"
+	systemUser "net-project-edu_manage/service"
 	"net-project-edu_manage/util"
 )
 
@@ -22,7 +22,7 @@ func AddSystemUser(c *gin.Context) {
 	}
 
 	//3.保存系统用户
-	if err := system_user.Add(c, systemUserDTO); err != nil {
+	if err := systemUser.Add(c, systemUserDTO); err != nil {
 		util.FailResToC(c, res.ServerFail, err.Error())
 		return
 	}
