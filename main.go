@@ -2,30 +2,22 @@
 package main
 
 import (
-	log "github.com/sirupsen/logrus"
-	"net-project-edu_manage/core/_log"
+	"net-project-edu_manage/config"
+	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/core/server"
-	"net-project-edu_manage/dao"
 )
 
 func main() {
 
 	//1.初始化日志
-	core.InitLogger()
+	config.InitLogger()
 
 	//2.初始化DB
-	dao.InitDB()
+	db.InitDbConn()
 
 	//3.确保最终关闭数据库链接
-	defer func() {
-		db, _ := dao.DB.DB()
-		_ = db.Close()
-		log.Printf("database connection closed")
-	}()
+	defer db.CloseDbConn()
 
-	//4.初始化Query
-	dao.InitQuery()
-
-	//5.启动服务器
+	//4.启动服务器
 	server.StartServer()
 }

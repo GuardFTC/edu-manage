@@ -4,9 +4,9 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"net-project-edu_manage/common/res"
+	"net-project-edu_manage/common/util"
 	"net-project-edu_manage/model/dto"
 	systemUser "net-project-edu_manage/service"
-	"net-project-edu_manage/util"
 )
 
 // AddSystemUser 新增系统用户

@@ -4,16 +4,16 @@ package system_user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
-	"net-project-edu_manage/dao"
+	"net-project-edu_manage/common/util"
+	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/dao/model/system"
 	"net-project-edu_manage/dao/query"
 	"net-project-edu_manage/model/dto"
-	"net-project-edu_manage/util"
 )
 
 // Add 新增系统用户
 func Add(c *gin.Context, systemUserDTO *dto.SystemUserDTO) error {
-	return dao.Q.Transaction(func(tx *query.Query) error {
+	return db.Q.Transaction(func(tx *query.Query) error {
 
 		//1.密码加密
 		if password, err := util.HashPassword(systemUserDTO.Password); err != nil {

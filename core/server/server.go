@@ -67,9 +67,9 @@ func waitForShutdown(srv *http.Server) {
 
 	//5.执行优雅关闭操作：拒绝新连接，等待现有请求完成或超时
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatalf("server close fail: %v", err)
+		log.Fatalf("server closed fail: %v", err)
 	}
 
 	//6.所有资源释放后，输出日志
-	log.Println("server close success")
+	log.Println("server closed success")
 }
