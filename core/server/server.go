@@ -3,8 +3,8 @@ package server
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"net-project-edu_manage/handler/router"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,31 +12,22 @@ import (
 	"time"
 )
 
-// router 定义核心路由
-var router *gin.Engine
-
 // StartServer 启动并优雅关闭服务器
 func StartServer() {
 
-	//1.创建 Gin 实例
-	router = gin.New()
+	//1.初始化基础路由组
+	router.InitBaseRouter()
 
-	//2.使用全局异常处理器
-	router.Use(errorHandler())
+	//2.初始化业务模块路由组
+	router.InitModelRouter()
 
-	//3.使用 Logger 和 Recovery 中间件
-	router.Use(gin.Logger(), gin.Recovery())
-
-	//4.初始化路由组
-	initRouter()
-
-	//5.创建http.Server实例
+	//3.创建http.Server实例
 	srv := &http.Server{
 		Addr:    ":8080",
-		Handler: router,
+		Handler: router.Router,
 	}
 
-	//6.创建协程启动 HTTP 服务
+	//4.创建协程启动 HTTP 服务
 	go func() {
 		log.Printf("server start success，listen addr：%s", srv.Addr)
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -44,7 +35,7 @@ func StartServer() {
 		}
 	}()
 
-	//7.等待中断信号并优雅关闭服务器
+	//5.等待中断信号并优雅关闭服务器
 	waitForShutdown(srv)
 }
 
