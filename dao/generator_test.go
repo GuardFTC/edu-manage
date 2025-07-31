@@ -3,21 +3,17 @@ package dao
 
 import (
 	"gorm.io/gorm"
-	"log"
+	"net-project-edu_manage/core/db"
 	"testing"
 )
 
 func Test_generate1(t *testing.T) {
 
 	//1.初始化DB
-	InitDB()
+	db.InitDbConn()
 
 	//2.确保最终关闭数据库链接
-	defer func() {
-		db, _ := DB.DB()
-		_ = db.Close()
-		log.Printf("database connection closed")
-	}()
+	defer db.CloseDbConn()
 
 	//3.定义参数结构体
 	type args struct {
@@ -35,7 +31,7 @@ func Test_generate1(t *testing.T) {
 		{
 			name: "生成DAO层、Model代码",
 			args: args{
-				db:           DB,
+				db:           db.DB,
 				tables:       []string{"system_user"},
 				outPath:      "query",
 				modelPkgPath: "./model/system",
