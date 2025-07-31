@@ -3,7 +3,9 @@ package server
 
 import (
 	"context"
+	"errors"
 	log "github.com/sirupsen/logrus"
+	"net-project-edu_manage/core"
 	"net-project-edu_manage/handler/router"
 	"net/http"
 	"os"
@@ -23,14 +25,14 @@ func StartServer() {
 
 	//3.创建http.Server实例
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":" + core.AppConfig.Server.Port,
 		Handler: router.Router,
 	}
 
 	//4.创建协程启动 HTTP 服务
 	go func() {
 		log.Printf("server start success，listen addr：%s", srv.Addr)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("server start error: %v", err)
 		}
 	}()

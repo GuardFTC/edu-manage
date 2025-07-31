@@ -2,15 +2,15 @@
 package main
 
 import (
-	"net-project-edu_manage/config/config"
+	"net-project-edu_manage/core"
 	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/core/server"
 )
 
 func main() {
 
-	//1.初始化日志
-	config.InitLogger()
+	//1.初始化配置
+	core.InitConfig()
 
 	//2.初始化DB
 	db.InitDbConn()
