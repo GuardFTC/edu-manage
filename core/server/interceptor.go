@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
-	"net-project-edu_manage/core/res"
+	"net-project-edu_manage/common/res"
 )
 
 // interceptor 拦截器
