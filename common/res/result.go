@@ -5,9 +5,9 @@ import "net/http"
 
 // Result 结果返回结构体
 type Result struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data any    `json:"data"`
 }
 
 // CreateSuccess 封装创建成功结果返回

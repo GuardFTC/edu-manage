@@ -6,15 +6,18 @@ import (
 	"github.com/jinzhu/copier"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
+	"net-project-edu_manage/common/res"
 	"net-project-edu_manage/common/util"
 	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/dao/model/system"
 	"net-project-edu_manage/dao/query"
 	"net-project-edu_manage/model/dto"
+	"net-project-edu_manage/model/request"
+	"net-project-edu_manage/model/vo"
 )
 
 // Add 新增系统用户
-func Add(c *gin.Context, systemUserDTO *dto.SystemUserDTO) error {
+func Add(c *gin.Context, systemUserDTO *dto.SystemUserDto) error {
 	return db.Q.Transaction(func(tx *query.Query) error {
 
 		//1.密码加密
@@ -62,7 +65,7 @@ func Delete(c *gin.Context, ids []string) error {
 }
 
 // Get 获取系统用户
-func Get(c *gin.Context, id string) (*dto.SystemUserDTO, error) {
+func Get(c *gin.Context, id string) (*dto.SystemUserDto, error) {
 
 	//1.id string 转 int64
 	intId := cast.ToInt64(id)
@@ -74,7 +77,7 @@ func Get(c *gin.Context, id string) (*dto.SystemUserDTO, error) {
 	}
 
 	//3.po to dto
-	var systemUserDTO dto.SystemUserDTO
+	var systemUserDTO dto.SystemUserDto
 	if err = copier.Copy(&systemUserDTO, &systemUser); err != nil {
 		return nil, err
 	}
@@ -84,7 +87,7 @@ func Get(c *gin.Context, id string) (*dto.SystemUserDTO, error) {
 }
 
 // Update 修改系统用户
-func Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDTO) error {
+func Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDto) error {
 	return db.Q.Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
@@ -114,4 +117,51 @@ func Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDTO) error {
 		//6.返回
 		return nil
 	})
+}
+
+// Page 分页查询系统用户
+func Page(c *gin.Context, request *request.SystemUserRequest) (*res.PageResult[*vo.SystemUserVo], error) {
+
+	//1.分页参数默认处理
+	request.DefaultPage()
+
+	//2.设置别名，利于后续Join查询
+	s := db.Q.SystemUser.As("s")
+	s1 := db.Q.SystemUser.As("s1")
+	s2 := db.Q.SystemUser.As("s2")
+
+	//3.封装查询参数
+	context := s.WithContext(c)
+	if request.Name != "" {
+		context = context.Where(s.Name.Like("%" + request.Name + "%"))
+	}
+	if request.Email != "" {
+		context = context.Where(s.Email.Like("%" + request.Email + "%"))
+	}
+
+	//4.暂存总数查询参数
+	countContext := context
+
+	//4.设置查询字段，排序，分页参数
+	context = context.
+		Select(s.ID, s.Name, s.Email, s.CreatedAt, s.UpdatedAt, s1.Name.As("created_user"), s2.Name.As("updated_user")).
+		Join(s1, s.CreatedBy.EqCol(s1.Email)).
+		Join(s2, s.UpdatedBy.EqCol(s2.Email)).
+		Order(s.ID.Desc()).
+		Offset(request.GetSkip()).Limit(request.PageSize)
+
+	//5.查询数据
+	var systemUsersVo []*vo.SystemUserVo
+	if err := context.Scan(&systemUsersVo); err != nil {
+		return nil, err
+	}
+
+	//6.查询总数
+	total, err := countContext.Count()
+	if err != nil {
+		return nil, err
+	}
+
+	//7.封装分页结果
+	return res.CreatePageResult[*vo.SystemUserVo](&request.BaseRequest, total, systemUsersVo), nil
 }
