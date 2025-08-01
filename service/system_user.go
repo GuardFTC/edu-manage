@@ -4,6 +4,8 @@ package system_user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"net-project-edu_manage/common/util"
 	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/dao/model/system"
@@ -40,4 +42,46 @@ func Add(c *gin.Context, systemUserDTO *dto.SystemUserDTO) error {
 		//5.默认返回
 		return nil
 	})
+}
+
+// Delete 删除系统用户
+func Delete(c *gin.Context, ids []string) error {
+	return db.Q.Transaction(func(tx *query.Query) error {
+
+		//1.id string 转 int64
+		intIds := cast.ToInt64Slice(ids)
+
+		//2.删除系统用户
+		if delRes, err := tx.SystemUser.WithContext(c).Where(tx.SystemUser.ID.In(intIds...)).Delete(); err != nil {
+			return err
+		} else {
+			log.Printf("删除系统用户成功,删除数量:%d", delRes.RowsAffected)
+			return nil
+		}
+	})
+}
+
+// Get 获取系统用户
+func Get(c *gin.Context, id string) (*dto.SystemUserDTO, error) {
+
+	//1.id string 转 int64
+	intId := cast.ToInt64(id)
+
+	//2.查询系统用户
+	systemUser, err := db.Q.SystemUser.WithContext(c).Where(db.Q.SystemUser.ID.Eq(intId)).First()
+	if err != nil {
+		return nil, err
+	}
+
+	//3.po to dto
+	var systemUserDTO dto.SystemUserDTO
+	if err = copier.Copy(&systemUserDTO, &systemUser); err != nil {
+		return nil, err
+	}
+
+	//4.密码置空
+	systemUserDTO.Password = ""
+
+	//5.返回dto
+	return &systemUserDTO, nil
 }

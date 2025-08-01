@@ -14,8 +14,8 @@ func initSystemUserRouter(v *gin.RouterGroup) *gin.RouterGroup {
 
 	//2.定义接口路由
 	systemUserRouter.POST("", handler.AddSystemUser)
-	systemUserRouter.DELETE("", nil)
-	systemUserRouter.GET(":id", nil)
+	systemUserRouter.DELETE("", handler.DeleteSystemUser)
+	systemUserRouter.GET(":id", handler.GetSystemUser)
 	systemUserRouter.PUT(":id", nil)
 	systemUserRouter.GET("", nil)
 

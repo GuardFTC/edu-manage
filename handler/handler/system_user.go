@@ -23,10 +23,47 @@ func AddSystemUser(c *gin.Context) {
 
 	//3.保存系统用户
 	if err := systemUser.Add(c, systemUserDTO); err != nil {
-		util.FailResToC(c, res.ServerFail, err.Error())
+		util.FailResToCByMsg(c, err.Error())
 		return
 	}
 
 	//4.返回
 	util.SuccessResToC(c, res.CreateSuccess, systemUserDTO)
+}
+
+// DeleteSystemUser 删除系统用户
+func DeleteSystemUser(c *gin.Context) {
+
+	//1.获取参数
+	ids := c.QueryArray("id")
+	if len(ids) == 0 {
+		util.FailResToC(c, res.BadRequestFail, "参数为空")
+		return
+	}
+
+	//2.删除系统用户
+	if err := systemUser.Delete(c, ids); err != nil {
+		util.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//3.返回
+	util.SuccessResToC(c, res.DeleteSuccess, nil)
+}
+
+// GetSystemUser 查询系统用户
+func GetSystemUser(c *gin.Context) {
+
+	//1.获取参数
+	id := c.Param("id")
+
+	//2.查询系统用户
+	systemUserDto, err := systemUser.Get(c, id)
+	if err != nil {
+		util.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//3.返回
+	util.SuccessResToC(c, res.QuerySuccess, systemUserDto)
 }

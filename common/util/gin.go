@@ -29,6 +29,25 @@ func FormatMsg(msg string) string {
 	return strings.Join(result, "\n")
 }
 
+// FailResToCByMsg 错误结果集转成JSON返回
+func FailResToCByMsg(c *gin.Context, msg string) {
+
+	//1.定义处理方法
+	var f func(msg string) *res.Result
+
+	//2.根据异常信息获取处理方法
+	if strings.Contains(msg, "not found") {
+		f = res.NotFoundFail
+	} else if strings.Contains(msg, "un process") {
+		f = res.UnProcessFail
+	} else {
+		f = res.ServerFail
+	}
+
+	//3.FailResToC
+	FailResToC(c, f, msg)
+}
+
 // FailResToC 错误结果集转成JSON返回
 func FailResToC(c *gin.Context, f func(msg string) *res.Result, msg string) {
 
