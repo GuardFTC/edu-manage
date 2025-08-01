@@ -14,9 +14,12 @@ import (
 	"net-project-edu_manage/model/dto"
 	"net-project-edu_manage/model/request"
 	"net-project-edu_manage/model/vo"
+	"sync"
 )
 
-type SystemUserService struct{}
+type SystemUserService struct {
+	sync sync.Mutex //预留锁 并发高时使用
+}
 
 // Add 新增系统用户
 func (sys *SystemUserService) Add(c *gin.Context, systemUserDTO *dto.SystemUserDto) error {
