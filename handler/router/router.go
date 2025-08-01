@@ -31,7 +31,10 @@ func InitModelRouter() {
 	//2.定义version1版本路由组
 	v1 := Router.Group("api/v1")
 
-	//3.定义v1-系统管理-用户管理路由组
+	//3.定义v1-鉴权路由组
+	initAuthRouter(v1)
+
+	//4.定义v1-系统管理-用户管理路由组
 	systemUserRouter := initSystemUserRouter(v1)
 	systemUserRouter.Use(tokenHandler)
 }
