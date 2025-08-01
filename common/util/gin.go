@@ -38,7 +38,7 @@ func FailResToCByMsg(c *gin.Context, msg string) {
 	//2.根据异常信息获取处理方法
 	if strings.Contains(msg, "not found") {
 		f = res.NotFoundFail
-	} else if strings.Contains(msg, "un process") {
+	} else if strings.Contains(msg, "unprocess") {
 		f = res.UnProcessFail
 	} else {
 		f = res.ServerFail

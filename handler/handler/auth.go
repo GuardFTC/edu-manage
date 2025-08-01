@@ -6,7 +6,10 @@ import (
 	"net-project-edu_manage/common/res"
 	"net-project-edu_manage/common/util"
 	"net-project-edu_manage/model/dto"
+	"net-project-edu_manage/service"
 )
+
+var authService = new(service.AuthService)
 
 // Login 登录
 func Login(c *gin.Context) {

@@ -23,3 +23,8 @@ server:
 log:
   level: info
   color: true
+
+# jwt配置
+jwt:
+    key: 1xExqF2nM+wBkM9gX1yQhN+eR/3Lg5sRh2nRvJfGbSk=
+    expire_hour: 2
