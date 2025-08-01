@@ -16,7 +16,7 @@ func initSystemUserRouter(v *gin.RouterGroup) *gin.RouterGroup {
 	systemUserRouter.POST("", handler.AddSystemUser)
 	systemUserRouter.DELETE("", handler.DeleteSystemUser)
 	systemUserRouter.GET(":id", handler.GetSystemUser)
-	systemUserRouter.PUT(":id", nil)
+	systemUserRouter.PUT(":id", handler.UpdateSystemUser)
 	systemUserRouter.GET("", nil)
 
 	//3.返回

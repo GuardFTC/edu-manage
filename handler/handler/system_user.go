@@ -13,22 +13,22 @@ import (
 func AddSystemUser(c *gin.Context) {
 
 	//1.创建DTO
-	var systemUserDTO *dto.SystemUserDTO
+	var systemUserDto *dto.SystemUserDTO
 
 	//2.校验参数并绑定
-	if err := c.ShouldBindJSON(&systemUserDTO); err != nil {
+	if err := c.ShouldBindJSON(&systemUserDto); err != nil {
 		util.FailResToC(c, res.BadRequestFail, util.FormatMsg(err.Error()))
 		return
 	}
 
 	//3.保存系统用户
-	if err := systemUser.Add(c, systemUserDTO); err != nil {
+	if err := systemUser.Add(c, systemUserDto); err != nil {
 		util.FailResToCByMsg(c, err.Error())
 		return
 	}
 
 	//4.返回
-	util.SuccessResToC(c, res.CreateSuccess, systemUserDTO)
+	util.SuccessResToC(c, res.CreateSuccess, systemUserDto)
 }
 
 // DeleteSystemUser 删除系统用户
@@ -66,4 +66,29 @@ func GetSystemUser(c *gin.Context) {
 
 	//3.返回
 	util.SuccessResToC(c, res.QuerySuccess, systemUserDto)
+}
+
+// UpdateSystemUser 修改系统用户
+func UpdateSystemUser(c *gin.Context) {
+
+	//1.获取路径参数
+	id := c.Param("id")
+
+	//2.创建DTO
+	var systemUserDto *dto.SystemUserDTO
+
+	//3.校验Body参数并绑定
+	if err := c.ShouldBindJSON(&systemUserDto); err != nil {
+		util.FailResToC(c, res.BadRequestFail, util.FormatMsg(err.Error()))
+		return
+	}
+
+	//4.更新系统用户
+	if err := systemUser.Update(c, id, systemUserDto); err != nil {
+		util.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//5.返回
+	util.SuccessResToC(c, res.UpdateSuccess, systemUserDto)
 }

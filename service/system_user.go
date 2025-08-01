@@ -79,9 +79,39 @@ func Get(c *gin.Context, id string) (*dto.SystemUserDTO, error) {
 		return nil, err
 	}
 
-	//4.密码置空
-	systemUserDTO.Password = ""
-
-	//5.返回dto
+	//4.返回dto
 	return &systemUserDTO, nil
+}
+
+// Update 修改系统用户
+func Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDTO) error {
+	return db.Q.Transaction(func(tx *query.Query) error {
+
+		//1.id string 转 int64
+		intId := cast.ToInt64(id)
+
+		//2.查询系统用户
+		systemUser, err := db.Q.SystemUser.WithContext(c).Where(db.Q.SystemUser.ID.Eq(intId)).First()
+		if err != nil {
+			return err
+		}
+
+		//3.dto to po
+		if err = copier.Copy(&systemUser, &systemUserDTO); err != nil {
+			return err
+		}
+
+		//4.更新
+		if updateRes, err := tx.SystemUser.WithContext(c).Where(tx.SystemUser.ID.Eq(intId)).Updates(&systemUser); err != nil {
+			return err
+		} else {
+			log.Printf("更新系统用户成功,更新数量:%d", updateRes.RowsAffected)
+		}
+
+		//5.ID回写
+		systemUserDTO.ID = intId
+
+		//6.返回
+		return nil
+	})
 }
