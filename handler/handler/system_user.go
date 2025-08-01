@@ -7,8 +7,11 @@ import (
 	"net-project-edu_manage/common/util"
 	"net-project-edu_manage/model/dto"
 	"net-project-edu_manage/model/request"
-	systemUser "net-project-edu_manage/service"
+	"net-project-edu_manage/service"
 )
+
+// systemUserService 系统用户服务
+var systemUserService = new(service.SystemUserService)
 
 // AddSystemUser 新增系统用户
 func AddSystemUser(c *gin.Context) {
@@ -23,7 +26,7 @@ func AddSystemUser(c *gin.Context) {
 	}
 
 	//3.保存系统用户
-	if err := systemUser.Add(c, systemUserDto); err != nil {
+	if err := systemUserService.Add(c, systemUserDto); err != nil {
 		util.FailResToCByMsg(c, err.Error())
 		return
 	}
@@ -43,7 +46,7 @@ func DeleteSystemUser(c *gin.Context) {
 	}
 
 	//2.删除系统用户
-	if err := systemUser.Delete(c, ids); err != nil {
+	if err := systemUserService.Delete(c, ids); err != nil {
 		util.FailResToCByMsg(c, err.Error())
 		return
 	}
@@ -59,7 +62,7 @@ func GetSystemUser(c *gin.Context) {
 	id := c.Param("id")
 
 	//2.查询系统用户
-	systemUserDto, err := systemUser.Get(c, id)
+	systemUserDto, err := systemUserService.Get(c, id)
 	if err != nil {
 		util.FailResToCByMsg(c, err.Error())
 		return
@@ -85,7 +88,7 @@ func UpdateSystemUser(c *gin.Context) {
 	}
 
 	//4.更新系统用户
-	if err := systemUser.Update(c, id, systemUserDto); err != nil {
+	if err := systemUserService.Update(c, id, systemUserDto); err != nil {
 		util.FailResToCByMsg(c, err.Error())
 		return
 	}
@@ -107,7 +110,7 @@ func PageSystemUser(c *gin.Context) {
 	}
 
 	//3.分页查询
-	pageRes, err := systemUser.Page(c, &systemUserRequest)
+	pageRes, err := systemUserService.Page(c, &systemUserRequest)
 	if err != nil {
 		util.FailResToCByMsg(c, err.Error())
 		return

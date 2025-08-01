@@ -1,5 +1,5 @@
-// Package system_user @Author:冯铁城 [17615007230@163.com] 2025-07-30 19:41:24
-package system_user
+// Package service @Author:冯铁城 [17615007230@163.com] 2025-07-30 19:41:24
+package service
 
 import (
 	"github.com/gin-gonic/gin"
@@ -16,8 +16,10 @@ import (
 	"net-project-edu_manage/model/vo"
 )
 
+type SystemUserService struct{}
+
 // Add 新增系统用户
-func Add(c *gin.Context, systemUserDTO *dto.SystemUserDto) error {
+func (sys *SystemUserService) Add(c *gin.Context, systemUserDTO *dto.SystemUserDto) error {
 	return db.Q.Transaction(func(tx *query.Query) error {
 
 		//1.密码加密
@@ -48,7 +50,7 @@ func Add(c *gin.Context, systemUserDTO *dto.SystemUserDto) error {
 }
 
 // Delete 删除系统用户
-func Delete(c *gin.Context, ids []string) error {
+func (sys *SystemUserService) Delete(c *gin.Context, ids []string) error {
 	return db.Q.Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
@@ -65,7 +67,7 @@ func Delete(c *gin.Context, ids []string) error {
 }
 
 // Get 获取系统用户
-func Get(c *gin.Context, id string) (*dto.SystemUserDto, error) {
+func (sys *SystemUserService) Get(c *gin.Context, id string) (*dto.SystemUserDto, error) {
 
 	//1.id string 转 int64
 	intId := cast.ToInt64(id)
@@ -87,7 +89,7 @@ func Get(c *gin.Context, id string) (*dto.SystemUserDto, error) {
 }
 
 // Update 修改系统用户
-func Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDto) error {
+func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDto) error {
 	return db.Q.Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
@@ -120,7 +122,7 @@ func Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDto) error {
 }
 
 // Page 分页查询系统用户
-func Page(c *gin.Context, request *request.SystemUserRequest) (*res.PageResult[*vo.SystemUserVo], error) {
+func (sys *SystemUserService) Page(c *gin.Context, request *request.SystemUserRequest) (*res.PageResult[*vo.SystemUserVo], error) {
 
 	//1.分页参数默认处理
 	request.DefaultPage()
