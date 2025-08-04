@@ -36,4 +36,7 @@ func InitModelRouter() {
 
 	//4.定义v1-系统管理-用户管理路由组
 	initSystemUserRouter(v1, tokenHandler)
+
+	//5.定义v1-年级管理-学年路由组
+	initAcademicYearRouter(v1, tokenHandler)
 }

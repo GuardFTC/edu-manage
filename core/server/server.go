@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net-project-edu_manage/config"
 	"net-project-edu_manage/handler/router"
+	"net-project-edu_manage/handler/validate"
 	"net/http"
 	"os"
 	"os/signal"
@@ -17,19 +18,22 @@ import (
 // StartServer 启动并优雅关闭服务器
 func StartServer() {
 
-	//1.初始化基础路由组
+	//1.初始化自定义校验器
+	validate.InitValidate()
+
+	//2.初始化基础路由组
 	router.InitBaseRouter()
 
-	//2.初始化业务模块路由组
+	//3.初始化业务模块路由组
 	router.InitModelRouter()
 
-	//3.创建http.Server实例
+	//4.创建http.Server实例
 	srv := &http.Server{
 		Addr:    ":" + config.AppConfig.Server.Port,
 		Handler: router.Router,
 	}
 
-	//4.创建协程启动 HTTP 服务
+	//5.创建协程启动 HTTP 服务
 	go func() {
 		log.Printf("server start success，listen addr：%s", srv.Addr)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -37,7 +41,7 @@ func StartServer() {
 		}
 	}()
 
-	//5.等待中断信号并优雅关闭服务器
+	//6.等待中断信号并优雅关闭服务器
 	waitForShutdown(srv)
 }
 

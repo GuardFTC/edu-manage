@@ -17,6 +17,7 @@ import (
 	"sync"
 )
 
+// SystemUserService 系统用户服务
 type SystemUserService struct {
 	sync sync.Mutex //预留锁 并发高时使用
 }

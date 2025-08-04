@@ -11,7 +11,7 @@ import (
 
 // AuthService 认证服务
 type AuthService struct {
-	sync sync.Mutex
+	sync sync.Mutex //预留锁 并发高时使用
 }
 
 // Login 登录
