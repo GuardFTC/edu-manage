@@ -4,10 +4,14 @@ package service
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
+	"net-project-edu_manage/common/res"
 	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/dao/model"
 	"net-project-edu_manage/dao/query"
 	"net-project-edu_manage/model/dto"
+	"net-project-edu_manage/model/request"
 	"sync"
 )
 
@@ -43,4 +47,132 @@ func (s *AcademicYearService) Add(c *gin.Context, academicYearDto *dto.AcademicY
 		//6.默认返回
 		return nil
 	})
+}
+
+// Delete 删除学年
+func (s *AcademicYearService) Delete(c *gin.Context, ids []string) error {
+	return db.Q.Transaction(func(tx *query.Query) error {
+
+		//1.id string 转 int64
+		intIds := cast.ToInt64Slice(ids)
+
+		//2.删除学年
+		if delRes, err := tx.AcademicYear.WithContext(c).Where(tx.AcademicYear.ID.In(intIds...)).Delete(); err != nil {
+			return err
+		} else {
+			log.Printf("删除学年成功,删除数量:%d", delRes.RowsAffected)
+			return nil
+		}
+	})
+}
+
+// Get 获取学年
+func (s *AcademicYearService) Get(c *gin.Context, id string) (*dto.AcademicYearDto, error) {
+
+	//1.id string 转 int64
+	intId := cast.ToInt64(id)
+
+	//2.查询学年
+	academicYear, err := db.Q.AcademicYear.WithContext(c).Where(db.Q.AcademicYear.ID.Eq(intId)).First()
+	if err != nil {
+		return nil, err
+	}
+
+	//3.po to dto
+	var academicYearDTO dto.AcademicYearDto
+	if err = copier.Copy(&academicYearDTO, &academicYear); err != nil {
+		return nil, err
+	}
+
+	//4.格式化时间
+	academicYearDTO.FormatDate()
+
+	//5.返回dto
+	return &academicYearDTO, nil
+}
+
+// Update 修改学年
+func (s *AcademicYearService) Update(c *gin.Context, id string, academicYearDto *dto.AcademicYearDto) error {
+	return db.Q.Transaction(func(tx *query.Query) error {
+
+		//1.id string 转 int64
+		intId := cast.ToInt64(id)
+
+		//2.查询学年
+		academicYear, err := db.Q.AcademicYear.WithContext(c).Where(db.Q.AcademicYear.ID.Eq(intId)).First()
+		if err != nil {
+			return err
+		}
+
+		//3.设置ID
+		academicYearDto.ID = intId
+
+		//4.设置名称
+		academicYearDto.SetName()
+
+		//5.设置修改人
+		academicYearDto.SetUpdateBy(c)
+
+		//6.dto to po
+		if err = copier.Copy(&academicYear, &academicYearDto); err != nil {
+			return err
+		}
+
+		//7.更新
+		if updateRes, err := tx.AcademicYear.WithContext(c).Where(tx.AcademicYear.ID.Eq(intId)).Updates(&academicYear); err != nil {
+			return err
+		} else {
+			log.Printf("更新学年成功,更新数量:%d", updateRes.RowsAffected)
+		}
+
+		//8.返回
+		return nil
+	})
+}
+
+// Page 分页查询学年
+func (s *AcademicYearService) Page(c *gin.Context, request *request.BaseRequest) (*res.PageResult[*dto.AcademicYearDto], error) {
+
+	//1.分页参数默认处理
+	request.DefaultPage()
+
+	//2.设置别名，利于后续Join查询
+	a := db.Q.AcademicYear.As("a")
+	s1 := db.Q.SystemUser.As("s1")
+	s2 := db.Q.SystemUser.As("s2")
+
+	//3.封装查询参数
+	context := a.WithContext(c)
+
+	//4.暂存总数查询参数
+	countContext := context
+
+	//5.设置查询字段，排序，分页参数
+	context = context.
+		Select(a.ALL, s1.Name.As("created_user"), s2.Name.As("updated_user")).
+		Join(s1, a.CreatedBy.EqCol(s1.Email)).
+		Join(s2, a.UpdatedBy.EqCol(s2.Email)).
+		Order(a.ID.Desc()).
+		Offset(request.GetSkip()).Limit(request.PageSize)
+
+	//6.查询数据
+	var academicYears []*model.AcademicYear
+	if err := context.Scan(&academicYears); err != nil {
+		return nil, err
+	}
+
+	//7.po to dto
+	var academicYearDtos []*dto.AcademicYearDto
+	if err := copier.Copy(&academicYearDtos, &academicYears); err != nil {
+		return nil, err
+	}
+
+	//8.查询总数
+	total, err := countContext.Count()
+	if err != nil {
+		return nil, err
+	}
+
+	//9.封装分页结果
+	return res.CreatePageResult[*dto.AcademicYearDto](request, total, academicYearDtos), nil
 }

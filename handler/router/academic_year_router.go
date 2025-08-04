@@ -15,10 +15,10 @@ func initAcademicYearRouter(v *gin.RouterGroup, tokenHandler gin.HandlerFunc) *g
 
 	//2.定义接口路由
 	academicYearRouter.POST("", handler.AddAcademicYear)
-	academicYearRouter.DELETE("", nil)
-	academicYearRouter.GET(":id", nil)
-	academicYearRouter.PUT(":id", nil)
-	academicYearRouter.GET("", nil)
+	academicYearRouter.DELETE("", handler.DeleteAcademicYear)
+	academicYearRouter.GET(":id", handler.GetAcademicYear)
+	academicYearRouter.PUT(":id", handler.UpdateAcademicYear)
+	academicYearRouter.GET("", handler.PageAcademicYear)
 
 	//3.返回
 	return academicYearRouter

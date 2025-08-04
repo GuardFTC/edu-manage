@@ -111,7 +111,8 @@ func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *d
 			return err
 		}
 
-		//3.密码回写
+		//3.ID,密码回写
+		systemUserDTO.ID = intId
 		systemUserDTO.Password = systemUser.Password
 
 		//4.设置修改人
@@ -129,8 +130,7 @@ func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *d
 			log.Printf("更新系统用户成功,更新数量:%d", updateRes.RowsAffected)
 		}
 
-		//7.ID回写,密码清空
-		systemUserDTO.ID = systemUser.ID
+		//7.密码清空
 		systemUserDTO.Password = ""
 
 		//8.返回

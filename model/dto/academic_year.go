@@ -38,6 +38,16 @@ func (dto *AcademicYearDto) ParseDate() error {
 	return err
 }
 
+// FormatDate 格式化时间
+func (dto *AcademicYearDto) FormatDate() {
+
+	//1.解析开始时间
+	dto.StartDateStr = dto.StartDate.Format(time.DateOnly)
+
+	//2.解析结束时间
+	dto.EndDateStr = dto.EndDate.Format(time.DateOnly)
+}
+
 // SetName 设置名称
 func (dto *AcademicYearDto) SetName() {
 
