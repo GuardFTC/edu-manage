@@ -38,7 +38,6 @@ func checkJWTToken(c *gin.Context) (map[string]any, bool) {
 	token := c.GetHeader("token")
 	if token == "" {
 		util.FailResToC(c, res.UnauthorizedFail, "token is null")
-		c.Abort()
 		return nil, false
 	}
 
@@ -46,7 +45,6 @@ func checkJWTToken(c *gin.Context) (map[string]any, bool) {
 	claims, err := util.ParseJWT(token)
 	if err != nil {
 		util.FailResToC(c, res.UnauthorizedFail, err.Error())
-		c.Abort()
 		return nil, false
 	}
 
@@ -54,7 +52,6 @@ func checkJWTToken(c *gin.Context) (map[string]any, bool) {
 	iat := cast.ToInt64(claims["iat"])
 	if time.Now().Unix() < iat {
 		util.FailResToC(c, res.UnauthorizedFail, "token is invalid")
-		c.Abort()
 		return nil, false
 	}
 
@@ -62,7 +59,6 @@ func checkJWTToken(c *gin.Context) (map[string]any, bool) {
 	exp := cast.ToInt64(claims["exp"])
 	if time.Now().Unix() > exp {
 		util.FailResToC(c, res.UnauthorizedFail, "token is expired")
-		c.Abort()
 		return nil, false
 	}
 

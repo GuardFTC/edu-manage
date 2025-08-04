@@ -30,7 +30,7 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (string, error) {
 
 	//3.比较密码
 	if err = util.VerifyPassword(systemUser.Password, loginDto.Password); err != nil {
-		return "", errors.New("password verify fail. unprocess")
+		return "", errors.New("password verify fail. " + util.UnProcessTag)
 	}
 
 	//4.登录成功，生成JWT Token，返回
