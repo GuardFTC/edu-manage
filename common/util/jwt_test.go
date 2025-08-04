@@ -2,15 +2,17 @@
 package util
 
 import (
+	"github.com/spf13/cast"
 	"net-project-edu_manage/config/config"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestGenerateJWT(t *testing.T) {
 
 	//1.配置初始化
-	config.InitConfig()
+	config.InitUnitTestConfig()
 
 	//2.参数结构体
 	type args struct {
@@ -21,11 +23,11 @@ func TestGenerateJWT(t *testing.T) {
 
 	//3.编写测试参数
 	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-		errMsg  string
+		name     string
+		args     args
+		wantHour float64
+		wantErr  bool
+		errMsg   string
 	}{
 		{
 			name: "测试不设置过期时间",
@@ -34,7 +36,8 @@ func TestGenerateJWT(t *testing.T) {
 				email:      "17615007230@163.com",
 				expireHour: 0,
 			},
-			wantErr: false,
+			wantErr:  false,
+			wantHour: 1000,
 		},
 		{
 			name: "测试设置过期时间",
@@ -43,7 +46,8 @@ func TestGenerateJWT(t *testing.T) {
 				email:      "17615007230@163.com",
 				expireHour: 2,
 			},
-			wantErr: false,
+			wantErr:  false,
+			wantHour: 2,
 		},
 	}
 
@@ -89,17 +93,18 @@ func TestGenerateJWT(t *testing.T) {
 					return
 				}
 
-				//3.判定expireHour
-				exp := claims["exp"]
-				if exp != tt.args.expireHour {
-					t.Errorf("GenerateJWT() exp = %v, want %v", exp, tt.args.expireHour)
-					return
-				}
-
-				//4.判定iat
+				//3.判定iat
 				iat := claims["iat"]
 				if iat == nil {
 					t.Errorf("GenerateJWT() iat = %v, want %v", iat, tt.args.expireHour)
+					return
+				}
+
+				//4.判定expireHour
+				exp := claims["exp"]
+				hour := time.Unix(cast.ToInt64(exp), 0).Sub(time.Unix(cast.ToInt64(iat), 0)).Hours()
+				if hour != tt.wantHour {
+					t.Errorf("GenerateJWT() exp = %v, want %v", exp, tt.args.expireHour)
 					return
 				}
 			}
@@ -117,7 +122,20 @@ func TestParseJWT(t *testing.T) {
 		want    map[string]any
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "测试空字符串解析",
+			args: args{
+				tokenString: "",
+			},
+			wantErr: true,
+		},
+		{
+			name: "测试异常token解析",
+			args: args{
+				tokenString: "123124",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

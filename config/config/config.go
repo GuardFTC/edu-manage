@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // Config 配置结构体
@@ -31,6 +32,44 @@ func InitConfig() {
 
 	//3.获取项目根目录
 	basePath := getBasePath(env)
+
+	//4.获取配置文件目录
+	configPath := filepath.Join(basePath, "config", "resources")
+
+	//5.设置配置文件信息
+	v.AddConfigPath(configPath)
+	v.SetConfigName("application-" + env)
+	v.SetConfigType("yaml")
+
+	//6.读取配置
+	if err := v.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("read config error: %w", err))
+	}
+
+	//7.配置会写到AppConfig
+	if err := v.Unmarshal(&AppConfig); err != nil {
+		panic(fmt.Errorf("unmarshal config error: %w", err))
+	}
+
+	//8.初始化日志
+	initLog()
+
+	//9.打印配置文件读取日志
+	log.Printf("init config by application-%s.yml", env)
+}
+
+// InitUnitTestConfig 初始化单元测试配置
+func InitUnitTestConfig() {
+
+	//1.初始化viper
+	v := viper.New()
+
+	//2.从环境变量获取环境
+	env := initEnv()
+
+	//3.获取项目根目录
+	basePath := getBasePath(env)
+	basePath = strings.Replace(basePath, "\\common\\util", "", -1)
 
 	//4.获取配置文件目录
 	configPath := filepath.Join(basePath, "config", "resources")
