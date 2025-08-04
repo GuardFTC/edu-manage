@@ -21,7 +21,7 @@ func AddSystemUser(c *gin.Context) {
 
 	//2.校验参数并绑定
 	if err := c.ShouldBindJSON(&systemUserDto); err != nil {
-		util.FailResToC(c, res.BadRequestFail, util.FormatMsg(err.Error()))
+		util.FailResToC(c, res.BadRequestFail, err.Error())
 		return
 	}
 
@@ -83,7 +83,7 @@ func UpdateSystemUser(c *gin.Context) {
 
 	//3.校验Body参数并绑定
 	if err := c.ShouldBindJSON(&systemUserDto); err != nil {
-		util.FailResToC(c, res.BadRequestFail, util.FormatMsg(err.Error()))
+		util.FailResToC(c, res.BadRequestFail, err.Error())
 		return
 	}
 
@@ -105,7 +105,7 @@ func PageSystemUser(c *gin.Context) {
 
 	//2.校验URL参数并绑定
 	if err := c.ShouldBindQuery(&systemUserRequest); err != nil {
-		util.FailResToC(c, res.BadRequestFail, util.FormatMsg(err.Error()))
+		util.FailResToC(c, res.BadRequestFail, err.Error())
 		return
 	}
 

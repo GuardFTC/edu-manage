@@ -19,7 +19,7 @@ func Login(c *gin.Context) {
 
 	//2.校验参数并绑定
 	if err := c.ShouldBindJSON(&loginDto); err != nil {
-		util.FailResToC(c, res.BadRequestFail, util.FormatMsg(err.Error()))
+		util.FailResToC(c, res.BadRequestFail, err.Error())
 		return
 	}
 
