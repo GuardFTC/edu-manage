@@ -3,6 +3,16 @@ package util
 
 import "github.com/gin-gonic/gin"
 
+// GetUsernameFromC 获取上下文中的用户名
+func GetUsernameFromC(c *gin.Context) (string, bool) {
+	return GetStringFromC(c, "username")
+}
+
+// GetEmailFromC 获取上下文中的邮箱
+func GetEmailFromC(c *gin.Context) (string, bool) {
+	return GetStringFromC(c, "email")
+}
+
 // GetStringFromC 获取上下文中的字符串
 func GetStringFromC(c *gin.Context, key string) (string, bool) {
 	return GetValueFromC[string](c, key)

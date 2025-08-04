@@ -7,4 +7,5 @@ type SystemUserDto struct {
 	Name     string `json:"name" form:"name" binding:"required,max=64"`          // 用户名
 	Email    string `json:"email" form:"email" binding:"required,email,max=128"` // 邮箱
 	Password string `json:"password" form:"password" binding:"required,max=128"` //密码
+	BaseDto  `json:"-"`
 }

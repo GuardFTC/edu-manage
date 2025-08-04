@@ -32,22 +32,25 @@ func (sys *SystemUserService) Add(c *gin.Context, systemUserDTO *dto.SystemUserD
 			systemUserDTO.Password = password
 		}
 
-		//2.dto to po
+		//2.设置创建人、修改人
+		systemUserDTO.SetCreateByAndUpdateBy(c)
+
+		//3.dto to po
 		var systemUser system.SystemUser
 		if err := copier.Copy(&systemUser, &systemUserDTO); err != nil {
 			return err
 		}
 
-		//3.入库保存
+		//4.入库保存
 		if err := tx.SystemUser.WithContext(c).Create(&systemUser); err != nil {
 			return err
 		}
 
-		//4.ID回写,密码清空
+		//5.ID回写,密码清空
 		systemUserDTO.ID = systemUser.ID
 		systemUserDTO.Password = ""
 
-		//5.默认返回
+		//6.默认返回
 		return nil
 	})
 }
@@ -104,22 +107,25 @@ func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *d
 			return err
 		}
 
-		//3.dto to po
+		//3.设置修改人
+		systemUserDTO.SetUpdateBy(c)
+
+		//4.dto to po
 		if err = copier.Copy(&systemUser, &systemUserDTO); err != nil {
 			return err
 		}
 
-		//4.更新
+		//5.更新
 		if updateRes, err := tx.SystemUser.WithContext(c).Where(tx.SystemUser.ID.Eq(intId)).Updates(&systemUser); err != nil {
 			return err
 		} else {
 			log.Printf("更新系统用户成功,更新数量:%d", updateRes.RowsAffected)
 		}
 
-		//5.ID回写
+		//6.ID回写
 		systemUserDTO.ID = intId
 
-		//6.返回
+		//7.返回
 		return nil
 	})
 }
