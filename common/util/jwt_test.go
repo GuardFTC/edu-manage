@@ -3,7 +3,7 @@ package util
 
 import (
 	"github.com/spf13/cast"
-	"net-project-edu_manage/config/config"
+	"net-project-edu_manage/config"
 	"reflect"
 	"testing"
 	"time"
@@ -12,7 +12,7 @@ import (
 func TestGenerateJWT(t *testing.T) {
 
 	//1.配置初始化
-	config.InitUnitTestConfig()
+	config.InitConfig()
 
 	//2.参数结构体
 	type args struct {

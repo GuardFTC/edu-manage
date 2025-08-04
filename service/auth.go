@@ -33,5 +33,6 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (string, error) {
 		return "", errors.New("password verify fail. unprocess")
 	}
 
-	return "", err
+	//4.登录成功，生成JWT Token，返回
+	return util.GenerateJWT(systemUser.Name, systemUser.Email, 0)
 }

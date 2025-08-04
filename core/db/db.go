@@ -4,7 +4,7 @@ package db
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"net-project-edu_manage/config/config"
+	"net-project-edu_manage/config"
 	"net-project-edu_manage/dao/query"
 	"time"
 

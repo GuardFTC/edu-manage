@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 	log "github.com/sirupsen/logrus"
-	"net-project-edu_manage/config/config"
+	"net-project-edu_manage/config"
 	"net-project-edu_manage/handler/router"
 	"net/http"
 	"os"

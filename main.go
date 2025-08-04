@@ -2,14 +2,14 @@
 package main
 
 import (
-	"net-project-edu_manage/config/config"
+	"net-project-edu_manage/config"
 	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/core/server"
 )
 
 func main() {
 
-	//1.初始化配置
+	//1.初始化配置（使用嵌入式配置文件）
 	config.InitConfig()
 
 	//2.初始化DB

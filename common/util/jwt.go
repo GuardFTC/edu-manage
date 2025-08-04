@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	log "github.com/sirupsen/logrus"
-	"net-project-edu_manage/config/config"
+	"net-project-edu_manage/config"
 	"time"
 )
 
