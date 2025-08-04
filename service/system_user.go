@@ -90,7 +90,10 @@ func (sys *SystemUserService) Get(c *gin.Context, id string) (*dto.SystemUserDto
 		return nil, err
 	}
 
-	//4.返回dto
+	//4.密码清空
+	systemUserDTO.Password = ""
+
+	//5.返回dto
 	return &systemUserDTO, nil
 }
 
@@ -107,25 +110,29 @@ func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *d
 			return err
 		}
 
-		//3.设置修改人
+		//3.密码回写
+		systemUserDTO.Password = systemUser.Password
+
+		//4.设置修改人
 		systemUserDTO.SetUpdateBy(c)
 
-		//4.dto to po
+		//5.dto to po
 		if err = copier.Copy(&systemUser, &systemUserDTO); err != nil {
 			return err
 		}
 
-		//5.更新
+		//6.更新
 		if updateRes, err := tx.SystemUser.WithContext(c).Where(tx.SystemUser.ID.Eq(intId)).Updates(&systemUser); err != nil {
 			return err
 		} else {
 			log.Printf("更新系统用户成功,更新数量:%d", updateRes.RowsAffected)
 		}
 
-		//6.ID回写
-		systemUserDTO.ID = intId
+		//7.ID回写,密码清空
+		systemUserDTO.ID = systemUser.ID
+		systemUserDTO.Password = ""
 
-		//7.返回
+		//8.返回
 		return nil
 	})
 }
