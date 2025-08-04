@@ -3,7 +3,6 @@ package interceptor
 
 import (
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"net-project-edu_manage/common/res"
 	"net-project-edu_manage/common/util"
@@ -14,49 +13,59 @@ import (
 func GetTokenHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		//1.获取请求头
-		token := c.GetHeader("token")
-		if token == "" {
-			util.FailResToC(c, res.UnauthorizedFail, "token is null")
-			c.Abort()
+		//1.校验Token,并获取Token参数
+		claims, ok := checkJWTToken(c)
+		if !ok {
 			return
 		}
 
-		//2.解析JWT Token
-		claims, err := util.ParseJWT(token)
-		if err != nil {
-			util.FailResToC(c, res.UnauthorizedFail, err.Error())
-			c.Abort()
-			return
-		}
+		//2.TODO 后续进行权限比较
 
-		//3.判定token是否为合法token
-		iat := cast.ToInt64(claims["iat"])
-		if time.Now().Unix() < iat {
-			util.FailResToC(c, res.UnauthorizedFail, "token is invalid")
-			c.Abort()
-			return
-		}
-
-		//4.判定token是否过期
-		exp := cast.ToInt64(claims["exp"])
-		if time.Now().Unix() > exp {
-			util.FailResToC(c, res.UnauthorizedFail, "token is expired")
-			c.Abort()
-			return
-		}
-
-		//5.TODO 后续进行权限比较
-
-		//6.遍历claims，添加内容到上下文
+		//3.遍历claims，添加内容到上下文
 		for key, value := range claims {
 			util.AddKVToC(c, key, value)
 		}
 
-		//7.执行请求
+		//4.执行请求
 		c.Next()
-
-		//8.打印请求状态
-		log.Printf("request status is %v\n", c.Writer.Status())
 	}
+}
+
+// checkJWTToken 检测JWT Token
+func checkJWTToken(c *gin.Context) (map[string]any, bool) {
+
+	//1.获取JWT Token
+	token := c.GetHeader("token")
+	if token == "" {
+		util.FailResToC(c, res.UnauthorizedFail, "token is null")
+		c.Abort()
+		return nil, false
+	}
+
+	//2.解析JWT Token
+	claims, err := util.ParseJWT(token)
+	if err != nil {
+		util.FailResToC(c, res.UnauthorizedFail, err.Error())
+		c.Abort()
+		return nil, false
+	}
+
+	//3.判定token是否为合法token
+	iat := cast.ToInt64(claims["iat"])
+	if time.Now().Unix() < iat {
+		util.FailResToC(c, res.UnauthorizedFail, "token is invalid")
+		c.Abort()
+		return nil, false
+	}
+
+	//4.判定token是否过期
+	exp := cast.ToInt64(claims["exp"])
+	if time.Now().Unix() > exp {
+		util.FailResToC(c, res.UnauthorizedFail, "token is expired")
+		c.Abort()
+		return nil, false
+	}
+
+	//5.默认返回
+	return claims, true
 }
