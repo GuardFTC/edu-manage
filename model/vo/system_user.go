@@ -3,7 +3,6 @@ package vo
 
 // SystemUserVo 系统用户VO
 type SystemUserVo struct {
-	ID    int64  `json:"id" gorm:"column:id"`
 	Name  string `json:"name" gorm:"column:name"`
 	Email string `json:"email" gorm:"column:email"`
 	BaseVo

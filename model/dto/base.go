@@ -7,8 +7,9 @@ import (
 )
 
 type BaseDto struct {
-	CreatedBy string `json:"created_by"` // 创建人ID
-	UpdatedBy string `json:"updated_by"` // 最后修改人ID
+	ID        int64  `json:"id" form:"id" binding:""` // 系统用户ID
+	CreatedBy string `json:"-"`                       // 创建人ID
+	UpdatedBy string `json:"-"`                       // 最后修改人ID
 }
 
 // SetCreateByAndUpdateBy 设置创建人ID和最后修改人ID

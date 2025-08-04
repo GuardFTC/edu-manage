@@ -8,13 +8,12 @@ import (
 
 // AcademicYearDto 学年DTO
 type AcademicYearDto struct {
-	ID           int64     `gorm:"column:id" json:"id" binding:""`                                             // 学年ID
 	Name         string    `gorm:"column:name" json:"name" binding:"omitempty,max=32"`                         // 学年名称，例如 2025-2026
 	StartDateStr string    `gorm:"column:start_date" json:"startDate" binding:"required,datetime=2006-01-02" ` // 学年开始日期
 	EndDateStr   string    `gorm:"column:end_date" json:"endDate" binding:"required,datetime=2006-01-02"`      // 学年结束日期
 	StartDate    time.Time `json:"-"`
 	EndDate      time.Time `json:"-"`
-	BaseDto      `json:"-"`
+	BaseDto
 }
 
 // ParseDate 解析时间
