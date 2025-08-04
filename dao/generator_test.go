@@ -38,6 +38,9 @@ func Test_generate1(t *testing.T) {
 				db: db.DB,
 				tables: []string{
 					"system_user",
+					"academic_year",
+					"grade",
+					"grade_year",
 				},
 				outPath:      "query",
 				modelPkgPath: "model",

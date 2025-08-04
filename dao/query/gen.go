@@ -16,34 +16,49 @@ import (
 )
 
 var (
-	Q          = new(Query)
-	SystemUser *systemUser
+	Q            = new(Query)
+	AcademicYear *academicYear
+	Grade        *grade
+	GradeYear    *gradeYear
+	SystemUser   *systemUser
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	AcademicYear = &Q.AcademicYear
+	Grade = &Q.Grade
+	GradeYear = &Q.GradeYear
 	SystemUser = &Q.SystemUser
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
-		db:         db,
-		SystemUser: newSystemUser(db, opts...),
+		db:           db,
+		AcademicYear: newAcademicYear(db, opts...),
+		Grade:        newGrade(db, opts...),
+		GradeYear:    newGradeYear(db, opts...),
+		SystemUser:   newSystemUser(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	SystemUser systemUser
+	AcademicYear academicYear
+	Grade        grade
+	GradeYear    gradeYear
+	SystemUser   systemUser
 }
 
 func (q *Query) Available() bool { return q.db != nil }
 
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
-		db:         db,
-		SystemUser: q.SystemUser.clone(db),
+		db:           db,
+		AcademicYear: q.AcademicYear.clone(db),
+		Grade:        q.Grade.clone(db),
+		GradeYear:    q.GradeYear.clone(db),
+		SystemUser:   q.SystemUser.clone(db),
 	}
 }
 
@@ -57,18 +72,27 @@ func (q *Query) WriteDB() *Query {
 
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
-		db:         db,
-		SystemUser: q.SystemUser.replaceDB(db),
+		db:           db,
+		AcademicYear: q.AcademicYear.replaceDB(db),
+		Grade:        q.Grade.replaceDB(db),
+		GradeYear:    q.GradeYear.replaceDB(db),
+		SystemUser:   q.SystemUser.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	SystemUser ISystemUserDo
+	AcademicYear IAcademicYearDo
+	Grade        IGradeDo
+	GradeYear    IGradeYearDo
+	SystemUser   ISystemUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		SystemUser: q.SystemUser.WithContext(ctx),
+		AcademicYear: q.AcademicYear.WithContext(ctx),
+		Grade:        q.Grade.WithContext(ctx),
+		GradeYear:    q.GradeYear.WithContext(ctx),
+		SystemUser:   q.SystemUser.WithContext(ctx),
 	}
 }
 
