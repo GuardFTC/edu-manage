@@ -35,6 +35,5 @@ func InitModelRouter() {
 	initAuthRouter(v1)
 
 	//4.定义v1-系统管理-用户管理路由组
-	systemUserRouter := initSystemUserRouter(v1)
-	systemUserRouter.Use(tokenHandler)
+	initSystemUserRouter(v1, tokenHandler)
 }

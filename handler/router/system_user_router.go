@@ -7,10 +7,11 @@ import (
 )
 
 // 初始化系统管理-用户管理路由
-func initSystemUserRouter(v *gin.RouterGroup) *gin.RouterGroup {
+func initSystemUserRouter(v *gin.RouterGroup, tokenHandler gin.HandlerFunc) *gin.RouterGroup {
 
 	//1.定义用户管理路由组
 	systemUserRouter := v.Group("system-users")
+	systemUserRouter.Use(tokenHandler)
 
 	//2.定义接口路由
 	systemUserRouter.POST("", handler.AddSystemUser)

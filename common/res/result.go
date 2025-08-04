@@ -50,6 +50,16 @@ func UnProcessFail(msg string) *Result {
 	return Fail(http.StatusUnprocessableEntity, msg)
 }
 
+// UnauthorizedFail 封装未授权结果返回
+func UnauthorizedFail(msg string) *Result {
+	return Fail(http.StatusUnauthorized, msg)
+}
+
+// ForbiddenFail 封装权限不足结果返回
+func ForbiddenFail(msg string) *Result {
+	return Fail(http.StatusForbidden, msg)
+}
+
 // Success 封装成功结果返回
 func Success(code int, data interface{}) *Result {
 	return BuildResult(code, "success", data)
