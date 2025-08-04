@@ -17,14 +17,14 @@ import (
 
 	"gorm.io/plugin/dbresolver"
 
-	"net-project-edu_manage/dao/model/system"
+	"net-project-edu_manage/dao/model"
 )
 
 func newSystemUser(db *gorm.DB, opts ...gen.DOOption) systemUser {
 	_systemUser := systemUser{}
 
 	_systemUser.systemUserDo.UseDB(db, opts...)
-	_systemUser.systemUserDo.UseModel(&system.SystemUser{})
+	_systemUser.systemUserDo.UseModel(&model.SystemUser{})
 
 	tableName := _systemUser.systemUserDo.TableName()
 	_systemUser.ALL = field.NewAsterisk(tableName)
@@ -147,17 +147,17 @@ type ISystemUserDo interface {
 	Count() (count int64, err error)
 	Scopes(funcs ...func(gen.Dao) gen.Dao) ISystemUserDo
 	Unscoped() ISystemUserDo
-	Create(values ...*system.SystemUser) error
-	CreateInBatches(values []*system.SystemUser, batchSize int) error
-	Save(values ...*system.SystemUser) error
-	First() (*system.SystemUser, error)
-	Take() (*system.SystemUser, error)
-	Last() (*system.SystemUser, error)
-	Find() ([]*system.SystemUser, error)
-	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*system.SystemUser, err error)
-	FindInBatches(result *[]*system.SystemUser, batchSize int, fc func(tx gen.Dao, batch int) error) error
+	Create(values ...*model.SystemUser) error
+	CreateInBatches(values []*model.SystemUser, batchSize int) error
+	Save(values ...*model.SystemUser) error
+	First() (*model.SystemUser, error)
+	Take() (*model.SystemUser, error)
+	Last() (*model.SystemUser, error)
+	Find() ([]*model.SystemUser, error)
+	FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.SystemUser, err error)
+	FindInBatches(result *[]*model.SystemUser, batchSize int, fc func(tx gen.Dao, batch int) error) error
 	Pluck(column field.Expr, dest interface{}) error
-	Delete(...*system.SystemUser) (info gen.ResultInfo, err error)
+	Delete(...*model.SystemUser) (info gen.ResultInfo, err error)
 	Update(column field.Expr, value interface{}) (info gen.ResultInfo, err error)
 	UpdateSimple(columns ...field.AssignExpr) (info gen.ResultInfo, err error)
 	Updates(value interface{}) (info gen.ResultInfo, err error)
@@ -169,9 +169,9 @@ type ISystemUserDo interface {
 	Assign(attrs ...field.AssignExpr) ISystemUserDo
 	Joins(fields ...field.RelationField) ISystemUserDo
 	Preload(fields ...field.RelationField) ISystemUserDo
-	FirstOrInit() (*system.SystemUser, error)
-	FirstOrCreate() (*system.SystemUser, error)
-	FindByPage(offset int, limit int) (result []*system.SystemUser, count int64, err error)
+	FirstOrInit() (*model.SystemUser, error)
+	FirstOrCreate() (*model.SystemUser, error)
+	FindByPage(offset int, limit int) (result []*model.SystemUser, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
 	Rows() (*sql.Rows, error)
 	Row() *sql.Row
@@ -273,57 +273,57 @@ func (s systemUserDo) Unscoped() ISystemUserDo {
 	return s.withDO(s.DO.Unscoped())
 }
 
-func (s systemUserDo) Create(values ...*system.SystemUser) error {
+func (s systemUserDo) Create(values ...*model.SystemUser) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return s.DO.Create(values)
 }
 
-func (s systemUserDo) CreateInBatches(values []*system.SystemUser, batchSize int) error {
+func (s systemUserDo) CreateInBatches(values []*model.SystemUser, batchSize int) error {
 	return s.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (s systemUserDo) Save(values ...*system.SystemUser) error {
+func (s systemUserDo) Save(values ...*model.SystemUser) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return s.DO.Save(values)
 }
 
-func (s systemUserDo) First() (*system.SystemUser, error) {
+func (s systemUserDo) First() (*model.SystemUser, error) {
 	if result, err := s.DO.First(); err != nil {
 		return nil, err
 	} else {
-		return result.(*system.SystemUser), nil
+		return result.(*model.SystemUser), nil
 	}
 }
 
-func (s systemUserDo) Take() (*system.SystemUser, error) {
+func (s systemUserDo) Take() (*model.SystemUser, error) {
 	if result, err := s.DO.Take(); err != nil {
 		return nil, err
 	} else {
-		return result.(*system.SystemUser), nil
+		return result.(*model.SystemUser), nil
 	}
 }
 
-func (s systemUserDo) Last() (*system.SystemUser, error) {
+func (s systemUserDo) Last() (*model.SystemUser, error) {
 	if result, err := s.DO.Last(); err != nil {
 		return nil, err
 	} else {
-		return result.(*system.SystemUser), nil
+		return result.(*model.SystemUser), nil
 	}
 }
 
-func (s systemUserDo) Find() ([]*system.SystemUser, error) {
+func (s systemUserDo) Find() ([]*model.SystemUser, error) {
 	result, err := s.DO.Find()
-	return result.([]*system.SystemUser), err
+	return result.([]*model.SystemUser), err
 }
 
-func (s systemUserDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*system.SystemUser, err error) {
-	buf := make([]*system.SystemUser, 0, batchSize)
+func (s systemUserDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*model.SystemUser, err error) {
+	buf := make([]*model.SystemUser, 0, batchSize)
 	err = s.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
 		return fc(tx, batch)
@@ -331,7 +331,7 @@ func (s systemUserDo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) 
 	return results, err
 }
 
-func (s systemUserDo) FindInBatches(result *[]*system.SystemUser, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (s systemUserDo) FindInBatches(result *[]*model.SystemUser, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return s.DO.FindInBatches(result, batchSize, fc)
 }
 
@@ -357,23 +357,23 @@ func (s systemUserDo) Preload(fields ...field.RelationField) ISystemUserDo {
 	return &s
 }
 
-func (s systemUserDo) FirstOrInit() (*system.SystemUser, error) {
+func (s systemUserDo) FirstOrInit() (*model.SystemUser, error) {
 	if result, err := s.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
-		return result.(*system.SystemUser), nil
+		return result.(*model.SystemUser), nil
 	}
 }
 
-func (s systemUserDo) FirstOrCreate() (*system.SystemUser, error) {
+func (s systemUserDo) FirstOrCreate() (*model.SystemUser, error) {
 	if result, err := s.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
-		return result.(*system.SystemUser), nil
+		return result.(*model.SystemUser), nil
 	}
 }
 
-func (s systemUserDo) FindByPage(offset int, limit int) (result []*system.SystemUser, count int64, err error) {
+func (s systemUserDo) FindByPage(offset int, limit int) (result []*model.SystemUser, count int64, err error) {
 	result, err = s.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -402,7 +402,7 @@ func (s systemUserDo) Scan(result interface{}) (err error) {
 	return s.DO.Scan(result)
 }
 
-func (s systemUserDo) Delete(models ...*system.SystemUser) (result gen.ResultInfo, err error) {
+func (s systemUserDo) Delete(models ...*model.SystemUser) (result gen.ResultInfo, err error) {
 	return s.DO.Delete(models)
 }
 

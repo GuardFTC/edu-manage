@@ -9,7 +9,7 @@ import (
 	"net-project-edu_manage/common/res"
 	"net-project-edu_manage/common/util"
 	"net-project-edu_manage/core/db"
-	"net-project-edu_manage/dao/model/system"
+	"net-project-edu_manage/dao/model"
 	"net-project-edu_manage/dao/query"
 	"net-project-edu_manage/model/dto"
 	"net-project-edu_manage/model/request"
@@ -36,7 +36,7 @@ func (sys *SystemUserService) Add(c *gin.Context, systemUserDTO *dto.SystemUserD
 		systemUserDTO.SetCreateByAndUpdateBy(c)
 
 		//3.dto to po
-		var systemUser system.SystemUser
+		var systemUser model.SystemUser
 		if err := copier.Copy(&systemUser, &systemUserDTO); err != nil {
 			return err
 		}

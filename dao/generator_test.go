@@ -3,19 +3,23 @@ package dao
 
 import (
 	"gorm.io/gorm"
+	"net-project-edu_manage/config"
 	"net-project-edu_manage/core/db"
 	"testing"
 )
 
 func Test_generate1(t *testing.T) {
 
-	//1.初始化DB
+	//1.初始化配置
+	config.InitConfig()
+
+	//2.初始化DB
 	db.InitDbConn()
 
-	//2.确保最终关闭数据库链接
+	//3.确保最终关闭数据库链接
 	defer db.CloseDbConn()
 
-	//3.定义参数结构体
+	//4.定义参数结构体
 	type args struct {
 		db           *gorm.DB
 		tables       []string
@@ -23,7 +27,7 @@ func Test_generate1(t *testing.T) {
 		modelPkgPath string
 	}
 
-	//4.定义测试用例
+	//5.定义测试用例
 	tests := []struct {
 		name string
 		args args
@@ -31,15 +35,17 @@ func Test_generate1(t *testing.T) {
 		{
 			name: "生成DAO层、Model代码",
 			args: args{
-				db:           db.DB,
-				tables:       []string{"system_user"},
+				db: db.DB,
+				tables: []string{
+					"system_user",
+				},
 				outPath:      "query",
-				modelPkgPath: "./model/system",
+				modelPkgPath: "model",
 			},
 		},
 	}
 
-	//5.执行测试（也就是生成代码）
+	//6.执行测试（也就是生成代码）
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			generate(tt.args.db, tt.args.tables, tt.args.outPath, tt.args.modelPkgPath)
