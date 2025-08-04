@@ -23,4 +23,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	//3.登录
+	jwtToken, err := authService.Login(loginDto)
+	if err != nil {
+		util.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//4.返回
+	util.SuccessResToC(c, res.QuerySuccess, jwtToken)
 }
