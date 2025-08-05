@@ -28,3 +28,10 @@ log:
 jwt:
     key: 1xExqF2nM+wBkM9gX1yQhN+eR/3Lg5sRh2nRvJfGbSk=
     expire_hour: 2
+
+# redis配置
+redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    database: 0
