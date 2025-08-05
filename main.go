@@ -2,6 +2,7 @@
 package main
 
 import (
+	"net-project-edu_manage/common/redis"
 	"net-project-edu_manage/config"
 	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/core/server"
@@ -18,6 +19,12 @@ func main() {
 	//3.确保最终关闭数据库链接
 	defer db.CloseDbConn()
 
-	//4.启动服务器
+	//4.初始化Redis
+	redis.InitRedis()
+
+	//5.确保最终关闭Redis链接
+	defer redis.CloseRedis()
+
+	//6.启动服务器
 	server.StartServer()
 }
