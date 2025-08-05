@@ -2,9 +2,9 @@
 package main
 
 import (
-	"net-project-edu_manage/common/redis"
 	"net-project-edu_manage/config"
 	"net-project-edu_manage/core/db"
+	"net-project-edu_manage/core/redis"
 	"net-project-edu_manage/core/server"
 )
 

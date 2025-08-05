@@ -9,24 +9,24 @@ import (
 	"net-project-edu_manage/config"
 )
 
-// rdb redis客户端
-var rdb *redis.Client
+// Rdb redis客户端
+var Rdb *redis.Client
 
-// ctx 空白上下文
-var ctx = context.Background()
+// Ctx 空白上下文
+var Ctx = context.Background()
 
 // InitRedis 初始化redis
 func InitRedis() {
 
 	//1.初始化Redis客户端
-	rdb = redis.NewClient(&redis.Options{
+	Rdb = redis.NewClient(&redis.Options{
 		Addr:     config.AppConfig.Redis.Host + ":" + cast.ToString(config.AppConfig.Redis.Port),
 		Password: config.AppConfig.Redis.Password,
 		DB:       config.AppConfig.Redis.Database,
 	})
 
 	//2.测试链接是否建立成功
-	if err := rdb.Ping(ctx).Err(); err != nil {
+	if err := Rdb.Ping(Ctx).Err(); err != nil {
 		log.Fatalf("redis connection error: %v", err)
 	} else {
 		log.Printf("redis connection success")
@@ -35,7 +35,7 @@ func InitRedis() {
 
 // CloseRedis 关闭Redis连接
 func CloseRedis() {
-	if err := rdb.Close(); err != nil {
+	if err := Rdb.Close(); err != nil {
 		log.Printf("redis close error: %v", err)
 	} else {
 		log.Println("redis connection closed success")
