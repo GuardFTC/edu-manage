@@ -34,6 +34,6 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (string, error) {
 		return "", errors.New("password verify fail. " + res.UnProcessTag)
 	}
 
-	//4.登录成功，生成JWT Token，返回
+	//4.登录成功，生成JWT Token，返回 TODO 后续添加记录登录信息到Redis等步骤
 	return util.GenerateJWT(systemUser.Name, systemUser.Email, 0)
 }
