@@ -1,9 +1,8 @@
-// Package util @Author:冯铁城 [17615007230@163.com] 2025-07-30 19:56:47
-package util
+// Package res @Author:冯铁城 [17615007230@163.com] 2025-07-30 19:56:47
+package res
 
 import (
 	"github.com/gin-gonic/gin"
-	"net-project-edu_manage/common/res"
 	"strings"
 )
 
@@ -17,15 +16,15 @@ const NotFoundTag = "not found"
 func FailResToCByMsg(c *gin.Context, msg string) {
 
 	//1.定义处理方法
-	var f func(msg string) *res.Result
+	var f func(msg string) *Result
 
 	//2.根据异常信息获取处理方法
 	if strings.Contains(msg, NotFoundTag) {
-		f = res.NotFoundFail
+		f = NotFoundFail
 	} else if strings.Contains(msg, UnProcessTag) {
-		f = res.UnProcessFail
+		f = UnProcessFail
 	} else {
-		f = res.ServerFail
+		f = ServerFail
 	}
 
 	//3.FailResToC
@@ -33,7 +32,7 @@ func FailResToCByMsg(c *gin.Context, msg string) {
 }
 
 // FailResToC 错误结果集转成JSON返回
-func FailResToC(c *gin.Context, f func(msg string) *res.Result, msg string) {
+func FailResToC(c *gin.Context, f func(msg string) *Result, msg string) {
 
 	//1.获取res
 	failRes := f(msg)
@@ -43,7 +42,7 @@ func FailResToC(c *gin.Context, f func(msg string) *res.Result, msg string) {
 }
 
 // SuccessResToC 成功结果集转成JSON返回
-func SuccessResToC(c *gin.Context, f func(data interface{}) *res.Result, data interface{}) {
+func SuccessResToC(c *gin.Context, f func(data interface{}) *Result, data interface{}) {
 
 	//1.获取res
 	successRes := f(data)

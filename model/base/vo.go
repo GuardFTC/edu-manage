@@ -1,8 +1,8 @@
-// Package vo @Author:冯铁城 [17615007230@163.com] 2025-08-04 20:29:50
-package vo
+// Package base @Author:冯铁城 [17615007230@163.com] 2025-08-04 20:29:50
+package base
 
-// BaseVo 基础VO
-type BaseVo struct {
+// Vo 基础VO
+type Vo struct {
 	ID          int64      `json:"id" gorm:"column:id"`
 	CreatedAt   FormatTime `json:"createdTime" gorm:"column:created_at"`
 	UpdatedAt   FormatTime `json:"updatedTime" gorm:"column:updated_at"`

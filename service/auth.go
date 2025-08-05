@@ -3,6 +3,7 @@ package service
 
 import (
 	"errors"
+	"net-project-edu_manage/common/res"
 	"net-project-edu_manage/common/util"
 	"net-project-edu_manage/core/db"
 	"net-project-edu_manage/model/dto"
@@ -30,7 +31,7 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (string, error) {
 
 	//3.比较密码
 	if err = util.VerifyPassword(systemUser.Password, loginDto.Password); err != nil {
-		return "", errors.New("password verify fail. " + util.UnProcessTag)
+		return "", errors.New("password verify fail. " + res.UnProcessTag)
 	}
 
 	//4.登录成功，生成JWT Token，返回

@@ -182,5 +182,5 @@ func (sys *SystemUserService) Page(c *gin.Context, request *request.SystemUserRe
 	}
 
 	//7.封装分页结果
-	return res.CreatePageResult[*vo.SystemUserVo](&request.BaseRequest, total, systemUsersVo), nil
+	return res.CreatePageResult[*vo.SystemUserVo](&request.Request, total, systemUsersVo), nil
 }

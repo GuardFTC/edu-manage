@@ -4,7 +4,6 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"net-project-edu_manage/common/res"
-	"net-project-edu_manage/common/util"
 	"net-project-edu_manage/model/dto"
 	"net-project-edu_manage/service"
 )
@@ -19,17 +18,17 @@ func Login(c *gin.Context) {
 
 	//2.校验参数并绑定
 	if err := c.ShouldBindJSON(&loginDto); err != nil {
-		util.FailResToC(c, res.BadRequestFail, err.Error())
+		res.FailResToC(c, res.BadRequestFail, err.Error())
 		return
 	}
 
 	//3.登录
 	jwtToken, err := authService.Login(loginDto)
 	if err != nil {
-		util.FailResToCByMsg(c, err.Error())
+		res.FailResToCByMsg(c, err.Error())
 		return
 	}
 
 	//4.返回
-	util.SuccessResToC(c, res.QuerySuccess, jwtToken)
+	res.SuccessResToC(c, res.QuerySuccess, jwtToken)
 }

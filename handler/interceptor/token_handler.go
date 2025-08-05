@@ -37,28 +37,28 @@ func checkJWTToken(c *gin.Context) (map[string]any, bool) {
 	//1.获取JWT Token
 	token := c.GetHeader("token")
 	if token == "" {
-		util.FailResToC(c, res.UnauthorizedFail, "token is null")
+		res.FailResToC(c, res.UnauthorizedFail, "token is null")
 		return nil, false
 	}
 
 	//2.解析JWT Token
 	claims, err := util.ParseJWT(token)
 	if err != nil {
-		util.FailResToC(c, res.UnauthorizedFail, err.Error())
+		res.FailResToC(c, res.UnauthorizedFail, err.Error())
 		return nil, false
 	}
 
 	//3.判定token是否为合法token
 	iat := cast.ToInt64(claims["iat"])
 	if time.Now().Unix() < iat {
-		util.FailResToC(c, res.UnauthorizedFail, "token is invalid")
+		res.FailResToC(c, res.UnauthorizedFail, "token is invalid")
 		return nil, false
 	}
 
 	//4.判定token是否过期
 	exp := cast.ToInt64(claims["exp"])
 	if time.Now().Unix() > exp {
-		util.FailResToC(c, res.UnauthorizedFail, "token is expired")
+		res.FailResToC(c, res.UnauthorizedFail, "token is expired")
 		return nil, false
 	}
 

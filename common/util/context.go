@@ -1,4 +1,4 @@
-// @Author:冯铁城 [17615007230@163.com] 2025-08-04 14:15:22
+// Package util @Author:冯铁城 [17615007230@163.com] 2025-08-04 14:15:22
 package util
 
 import "github.com/gin-gonic/gin"

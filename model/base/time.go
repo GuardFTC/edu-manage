@@ -1,5 +1,5 @@
-// Package vo @Author:冯铁城 [17615007230@163.com] 2025-08-04 20:26:31
-package vo
+// Package base @Author:冯铁城 [17615007230@163.com] 2025-08-04 20:26:31
+package base
 
 import (
 	"database/sql/driver"

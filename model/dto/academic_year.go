@@ -3,6 +3,7 @@ package dto
 
 import (
 	"fmt"
+	"net-project-edu_manage/model/base"
 	"time"
 )
 
@@ -13,7 +14,7 @@ type AcademicYearDto struct {
 	EndDateStr   string    `gorm:"column:end_date" json:"endDate" binding:"required,datetime=2006-01-02"`      // 学年结束日期
 	StartDate    time.Time `json:"-"`
 	EndDate      time.Time `json:"-"`
-	BaseDto
+	base.Dto
 }
 
 // ParseDate 解析时间
