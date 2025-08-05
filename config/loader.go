@@ -15,6 +15,7 @@ type Config struct {
 	Server   config.ServerConfig   `mapstructure:"server"`
 	Log      config.LogConfig      `mapstructure:"log"`
 	Jwt      config.JwtConfig      `mapstructure:"jwt"`
+	Redis    config.RedisConfig    `mapstructure:"redis"`
 }
 
 // AppConfig 项目总配置
