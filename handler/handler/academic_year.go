@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net-project-edu_manage/common/res"
 	"net-project-edu_manage/model/dto"
+	"net-project-edu_manage/model/request"
 	"net-project-edu_manage/service"
 )
 
@@ -120,22 +121,22 @@ func UpdateAcademicYear(c *gin.Context) {
 // PageAcademicYear 分页查询学年
 func PageAcademicYear(c *gin.Context) {
 
-	////1.创建查询参数
-	//academicYearRequest := base.Request{}
-	//
-	////2.校验URL参数并绑定
-	//if err := c.ShouldBindQuery(&academicYearRequest); err != nil {
-	//	res.FailResToC(c, res.BadRequestFail, err.Error())
-	//	return
-	//}
-	//
-	////3.分页查询
-	//pageRes, err := academicYearService.Page(c, &academicYearRequest)
-	//if err != nil {
-	//	res.FailResToCByMsg(c, err.Error())
-	//	return
-	//}
+	//1.创建查询参数
+	academicYearRequest := request.AcademicYearRequest{}
+
+	//2.校验URL参数并绑定
+	if err := c.ShouldBindQuery(&academicYearRequest); err != nil {
+		res.FailResToC(c, res.BadRequestFail, err.Error())
+		return
+	}
+
+	//3.分页查询
+	pageRes, err := academicYearService.Page(c, &academicYearRequest)
+	if err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
 
 	//4.返回
-	res.SuccessResToC(c, res.QuerySuccess, nil)
+	res.SuccessResToC(c, res.QuerySuccess, pageRes)
 }

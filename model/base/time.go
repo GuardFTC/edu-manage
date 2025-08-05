@@ -9,21 +9,16 @@ import (
 	"time"
 )
 
+// 默认时区
+var DefaultLoc, _ = time.LoadLocation("Asia/Shanghai")
+
+// DefaultLayout 默认时间格式
+const DefaultLayout = time.DateTime
+
 // FormatTime 自定义时间类型，支持自定义时间格式序列化
 type FormatTime struct {
 	time.Time        // 嵌入原始 time.Time
 	Layout    string // 时间格式，如："2006-01-02 15:04:05"
-}
-
-// 默认时间格式,相当于 Java 的 yyyy-MM-dd HH:mm:ss
-const defaultLayout = time.DateTime
-
-// NewFormatTime 工厂方法，用于创建 FormatTime 实例
-func NewFormatTime(t time.Time, layout string) FormatTime {
-	return FormatTime{
-		Time:   t,
-		Layout: layout,
-	}
 }
 
 // MarshalJSON 自定义序列化方法，输出指定格式时间字符串
@@ -32,7 +27,7 @@ func (t *FormatTime) MarshalJSON() ([]byte, error) {
 	//1.获取格式化模版
 	layout := t.Layout
 	if layout == "" {
-		layout = defaultLayout
+		layout = DefaultLayout
 	}
 
 	//2.格式化代码
@@ -48,7 +43,7 @@ func (t *FormatTime) UnmarshalJSON(b []byte) error {
 	//1.获取格式化模版
 	layout := t.Layout
 	if layout == "" {
-		layout = defaultLayout
+		layout = DefaultLayout
 	}
 
 	//2.获取时间字符串

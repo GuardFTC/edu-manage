@@ -12,7 +12,10 @@ import (
 	"net-project-edu_manage/dao/query"
 	"net-project-edu_manage/model/base"
 	"net-project-edu_manage/model/dto"
+	"net-project-edu_manage/model/request"
+	"net-project-edu_manage/model/vo"
 	"sync"
+	"time"
 )
 
 // AcademicYearService 学年服务
@@ -131,49 +134,67 @@ func (s *AcademicYearService) Update(c *gin.Context, id string, academicYearDto 
 }
 
 // Page 分页查询学年
-func (s *AcademicYearService) Page(c *gin.Context, request *base.Vo) (*res.PageResult[*dto.AcademicYearDto], error) {
+func (s *AcademicYearService) Page(c *gin.Context, request *request.AcademicYearRequest) (*res.PageResult[*vo.AcademicYearVo], error) {
 
-	////1.分页参数默认处理
-	//request()
-	//
-	////2.设置别名，利于后续Join查询
-	//a := db.Q.AcademicYear.As("a")
-	//s1 := db.Q.SystemUser.As("s1")
-	//s2 := db.Q.SystemUser.As("s2")
-	//
-	////3.封装查询参数
-	//context := a.WithContext(c)
-	//
-	////4.暂存总数查询参数
-	//countContext := context
-	//
-	////5.设置查询字段，排序，分页参数
-	//context = context.
-	//	Select(a.ALL, s1.Name.As("created_user"), s2.Name.As("updated_user")).
-	//	Join(s1, a.CreatedBy.EqCol(s1.Email)).
-	//	Join(s2, a.UpdatedBy.EqCol(s2.Email)).
-	//	Order(a.ID.Desc()).
-	//	Offset(request.GetSkip()).Limit(request.PageSize)
-	//
-	////6.查询数据
-	//var academicYears []*model.AcademicYear
-	//if err := context.Scan(&academicYears); err != nil {
-	//	return nil, err
-	//}
-	//
-	////7.po to dto
-	//var academicYearDtos []*dto.AcademicYearDto
-	//if err := copier.Copy(&academicYearDtos, &academicYears); err != nil {
-	//	return nil, err
-	//}
-	//
-	////8.查询总数
-	//total, err := countContext.Count()
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	////9.封装分页结果
-	//return res.CreatePageResult[*dto.AcademicYearDto](request, total, academicYearDtos), nil
-	return nil, nil
+	//1.分页参数默认处理
+	request.DefaultPage()
+
+	//2.设置别名，利于后续Join查询
+	ay := db.Q.AcademicYear.As("ay")
+	s1 := db.Q.SystemUser.As("s1")
+	s2 := db.Q.SystemUser.As("s2")
+
+	//3.封装查询参数
+	context := ay.WithContext(c)
+	if request.Name != "" {
+		context = context.Where(ay.Name.Like("%" + request.Name + "%"))
+	}
+	if request.StartDateBegin != "" {
+		location := cast.ToTimeInDefaultLocation(request.StartDateBegin, base.DefaultLoc)
+		context = context.Where(ay.StartDate.Gte(location))
+	}
+	if request.StartDateEnd != "" {
+		location := cast.ToTimeInDefaultLocation(request.StartDateEnd, base.DefaultLoc)
+		context = context.Where(ay.StartDate.Lte(location))
+	}
+	if request.EndDateBegin != "" {
+		location := cast.ToTimeInDefaultLocation(request.EndDateBegin, base.DefaultLoc)
+		context = context.Where(ay.EndDate.Gte(location))
+	}
+	if request.EndDateEnd != "" {
+		location := cast.ToTimeInDefaultLocation(request.EndDateEnd, base.DefaultLoc)
+		context = context.Where(ay.EndDate.Lte(location))
+	}
+
+	//4.暂存总数查询参数
+	countContext := context
+
+	//5.设置查询字段，排序，分页参数
+	context = context.
+		Select(ay.ID, ay.Name, ay.StartDate, ay.EndDate, ay.CreatedAt, ay.UpdatedAt, s1.Name.As("created_user"), s2.Name.As("updated_user")).
+		Join(s1, ay.CreatedBy.EqCol(s1.Email)).
+		Join(s2, ay.UpdatedBy.EqCol(s2.Email)).
+		Order(ay.ID.Desc()).
+		Offset(request.GetSkip()).Limit(request.PageSize)
+
+	//6.查询数据
+	var academicYearVos []*vo.AcademicYearVo
+	if err := context.Scan(&academicYearVos); err != nil {
+		return nil, err
+	}
+
+	//7.循环设置时间格式化模版
+	for _, academicYearVo := range academicYearVos {
+		academicYearVo.StartDate.Layout = time.DateOnly
+		academicYearVo.EndDate.Layout = time.DateOnly
+	}
+
+	//8.查询总数
+	total, err := countContext.Count()
+	if err != nil {
+		return nil, err
+	}
+
+	//9.封装分页结果
+	return res.CreatePageResult[*vo.AcademicYearVo](&request.Request, total, academicYearVos), nil
 }

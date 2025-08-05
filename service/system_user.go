@@ -170,8 +170,8 @@ func (sys *SystemUserService) Page(c *gin.Context, request *request.SystemUserRe
 		Offset(request.GetSkip()).Limit(request.PageSize)
 
 	//5.查询数据
-	var systemUsersVo []*vo.SystemUserVo
-	if err := context.Scan(&systemUsersVo); err != nil {
+	var systemUsersVos []*vo.SystemUserVo
+	if err := context.Scan(&systemUsersVos); err != nil {
 		return nil, err
 	}
 
@@ -182,5 +182,5 @@ func (sys *SystemUserService) Page(c *gin.Context, request *request.SystemUserRe
 	}
 
 	//7.封装分页结果
-	return res.CreatePageResult[*vo.SystemUserVo](&request.Request, total, systemUsersVo), nil
+	return res.CreatePageResult[*vo.SystemUserVo](&request.Request, total, systemUsersVos), nil
 }
