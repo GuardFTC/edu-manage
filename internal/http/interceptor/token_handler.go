@@ -4,7 +4,9 @@ package interceptor
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
+	"net-project-edu_manage/internal/common/constant"
 	"net-project-edu_manage/internal/common/util"
+	"net-project-edu_manage/internal/infrastructure/redis"
 	"net-project-edu_manage/internal/model/res"
 	"time"
 )
@@ -41,27 +43,34 @@ func checkJWTToken(c *gin.Context) (map[string]any, bool) {
 		return nil, false
 	}
 
-	//2.解析JWT Token
+	//2.判定token是否有效
+	exists, _ := redis.HashClient.HExists(constant.LoginTokenMapKey, token)
+	if !exists {
+		res.FailResToC(c, res.UnauthorizedFail, "token is invalid")
+		return nil, false
+	}
+
+	//3.解析JWT Token
 	claims, err := util.ParseJWT(token)
 	if err != nil {
 		res.FailResToC(c, res.UnauthorizedFail, err.Error())
 		return nil, false
 	}
 
-	//3.判定token是否为合法token
+	//4.判定token是否为合法token
 	iat := cast.ToInt64(claims["iat"])
 	if time.Now().Unix() < iat {
 		res.FailResToC(c, res.UnauthorizedFail, "token is invalid")
 		return nil, false
 	}
 
-	//4.判定token是否过期
+	//5.判定token是否过期
 	exp := cast.ToInt64(claims["exp"])
 	if time.Now().Unix() > exp {
 		res.FailResToC(c, res.UnauthorizedFail, "token is expired")
 		return nil, false
 	}
 
-	//5.默认返回
+	//6.默认返回
 	return claims, true
 }

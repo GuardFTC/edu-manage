@@ -83,8 +83,14 @@ func getToken(systemUser *model.SystemUser) (string, error) {
 
 		//5.异步写入redis
 		go func() {
+
+			//6.记录用户ID-Token
 			redis.HashClient.HSet(constant.LoginTokenKey, cast.ToString(systemUser.ID), token)
 			redis.StringClient.Expire(constant.LoginTokenKey, exp)
+
+			//7.记录Token-用户ID
+			redis.HashClient.HSet(constant.LoginTokenMapKey, token, cast.ToString(systemUser.ID))
+			redis.StringClient.Expire(constant.LoginTokenMapKey, exp)
 		}()
 	}
 
