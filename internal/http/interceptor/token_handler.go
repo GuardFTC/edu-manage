@@ -4,8 +4,8 @@ package interceptor
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
+	"net-project-edu_manage/internal/common/util"
 	"net-project-edu_manage/internal/model/res"
-	"net-project-edu_manage/internal/util"
 	"time"
 )
 

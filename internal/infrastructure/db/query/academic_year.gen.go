@@ -7,7 +7,7 @@ package query
 import (
 	"context"
 	"database/sql"
-	"net-project-edu_manage/internal/repository/model"
+	"net-project-edu_manage/internal/infrastructure/db/model"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"

@@ -3,7 +3,7 @@ package base
 
 import (
 	"github.com/gin-gonic/gin"
-	"net-project-edu_manage/internal/util"
+	"net-project-edu_manage/internal/common/util"
 )
 
 // Dto 基础DTO

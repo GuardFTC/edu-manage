@@ -3,14 +3,28 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"net-project-edu_manage/internal/handler/interceptor"
+	"net-project-edu_manage/internal/http/interceptor"
+	"net-project-edu_manage/internal/http/validate"
 )
 
 // Router 核心路由
 var Router *gin.Engine
 
-// InitBaseRouter 初始化核心基础路由
-func InitBaseRouter() {
+// InitRouter 初始化路由
+func InitRouter() {
+
+	//1.初始化自定义校验器
+	validate.InitValidate()
+
+	//2.初始化基础路由组
+	initBaseRouter()
+
+	//3.初始化业务模块路由组
+	initModelRouter()
+}
+
+// initBaseRouter 初始化核心基础路由
+func initBaseRouter() {
 
 	//1.创建 Gin 实例
 	Router = gin.New()
@@ -22,8 +36,8 @@ func InitBaseRouter() {
 	Router.Use(gin.Logger(), gin.Recovery())
 }
 
-// InitModelRouter 初始化业务模块路由
-func InitModelRouter() {
+// initModelRouter 初始化业务模块路由
+func initModelRouter() {
 
 	//1.获取Token处理器
 	tokenHandler := interceptor.GetTokenHandler()

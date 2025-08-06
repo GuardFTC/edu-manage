@@ -1,5 +1,5 @@
 // @Author:冯铁城 [17615007230@163.com] 2025-07-30 15:51:47
-package repository
+package db
 
 import (
 	"gorm.io/gorm"

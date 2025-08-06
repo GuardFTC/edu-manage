@@ -3,10 +3,10 @@ package service
 
 import (
 	"errors"
-	"net-project-edu_manage/internal/db"
+	"net-project-edu_manage/internal/common/util"
+	"net-project-edu_manage/internal/infrastructure/db"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/res"
-	"net-project-edu_manage/internal/util"
 	"sync"
 )
 

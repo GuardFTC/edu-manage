@@ -3,7 +3,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"net-project-edu_manage/internal/handler/handler"
+	"net-project-edu_manage/internal/http/handler"
 )
 
 // 初始化系统管理-用户管理路由

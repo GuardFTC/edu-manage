@@ -3,8 +3,9 @@ package main
 
 import (
 	"net-project-edu_manage/internal/config"
-	"net-project-edu_manage/internal/db"
-	"net-project-edu_manage/internal/redis"
+	"net-project-edu_manage/internal/http/router"
+	"net-project-edu_manage/internal/infrastructure/db"
+	"net-project-edu_manage/internal/infrastructure/redis"
 	"net-project-edu_manage/internal/server"
 )
 
@@ -13,18 +14,17 @@ func main() {
 	//1.初始化配置（使用嵌入式配置文件）
 	config.InitConfig()
 
-	//2.初始化DB
+	//2.初始化DB,确保最终关闭数据库链接
 	db.InitDbConn()
-
-	//3.确保最终关闭数据库链接
 	defer db.CloseDbConn()
 
-	//4.初始化Redis
+	//3.初始化Redis,确保最终关闭Redis链接
 	redis.InitRedis()
-
-	//5.确保最终关闭Redis链接
 	defer redis.CloseRedis()
 
-	//6.启动服务器
+	//4.初始化路由
+	router.InitRouter()
+
+	//5.启动服务器
 	server.StartServer()
 }

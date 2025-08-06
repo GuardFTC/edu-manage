@@ -6,14 +6,14 @@ import (
 	"github.com/jinzhu/copier"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
-	"net-project-edu_manage/internal/db"
+	"net-project-edu_manage/internal/common/util"
+	"net-project-edu_manage/internal/infrastructure/db"
+	"net-project-edu_manage/internal/infrastructure/db/model"
+	"net-project-edu_manage/internal/infrastructure/db/query"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/request"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/model/vo"
-	"net-project-edu_manage/internal/repository/model"
-	"net-project-edu_manage/internal/repository/query"
-	"net-project-edu_manage/internal/util"
 	"sync"
 )
 
