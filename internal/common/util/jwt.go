@@ -3,17 +3,18 @@ package util
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	log "github.com/sirupsen/logrus"
 	"net-project-edu_manage/internal/config"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	log "github.com/sirupsen/logrus"
 )
 
 // JwtKey
 var key = []byte(config.AppConfig.Jwt.Key)
 
 // GenerateJWT 生成JWT Token
-func GenerateJWT(username string, email string, expireHour time.Duration, isRefreshToken bool) (string, error) {
+func GenerateJWT(id int64, username string, email string, expireHour time.Duration, isRefreshToken bool) (string, error) {
 
 	//1.创建信息声明
 	var claims jwt.MapClaims
@@ -21,11 +22,13 @@ func GenerateJWT(username string, email string, expireHour time.Duration, isRefr
 	//2.根据是否为刷新令牌，设置不同声明
 	if isRefreshToken {
 		claims = jwt.MapClaims{
+			"id":       id,
 			"username": username,
 			"email":    email,
 		}
 	} else {
 		claims = jwt.MapClaims{
+			"id":       id,
 			"username": username,
 			"email":    email,
 			"exp":      time.Now().Add(expireHour).Unix(), // 过期时间

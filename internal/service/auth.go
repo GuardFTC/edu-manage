@@ -3,7 +3,6 @@ package service
 
 import (
 	"errors"
-	"github.com/spf13/cast"
 	"net-project-edu_manage/internal/common/constant"
 	"net-project-edu_manage/internal/common/util"
 	"net-project-edu_manage/internal/config"
@@ -14,6 +13,8 @@ import (
 	"net-project-edu_manage/internal/repository"
 	"sync"
 	"time"
+
+	"github.com/spf13/cast"
 )
 
 // systemUserRepo 系统用户仓库
@@ -62,6 +63,11 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (*dto.LoginResultDto, error)
 	return loginRes, nil
 }
 
+// RefreshToken 刷新token
+func (a *AuthService) RefreshToken(token string) (*dto.LoginResultDto, error) {
+	return nil, nil
+}
+
 // getToken 获取token
 func getToken(systemUser *model.SystemUser) (string, error) {
 
@@ -75,7 +81,7 @@ func getToken(systemUser *model.SystemUser) (string, error) {
 	if token == "" {
 
 		//4.生成token
-		t, err := util.GenerateJWT(systemUser.Name, systemUser.Email, exp, false)
+		t, err := util.GenerateJWT(systemUser.ID, systemUser.Name, systemUser.Email, exp, false)
 		if err != nil {
 			return "", err
 		}
@@ -111,7 +117,7 @@ func getRefreshToken(systemUser *model.SystemUser) (string, error) {
 	if refreshToken == "" {
 
 		//4.生成refreshToken
-		t, err := util.GenerateJWT(systemUser.Name, systemUser.Email, exp, true)
+		t, err := util.GenerateJWT(systemUser.ID, systemUser.Name, systemUser.Email, exp, true)
 		if err != nil {
 			return "", err
 		}

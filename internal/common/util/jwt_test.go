@@ -117,7 +117,7 @@ func TestGenerateJWT(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			// 1.调用GenerateJWT
-			jwtToken, err := GenerateJWT(tt.args.username, tt.args.email, tt.args.expireHour, tt.args.isRefreshToken)
+			jwtToken, err := GenerateJWT(0, tt.args.username, tt.args.email, tt.args.expireHour, tt.args.isRefreshToken)
 
 			// 2.判定是否发生异常，如果与预期不一致，则返回错误
 			if (err != nil) != tt.wantErr {
@@ -221,7 +221,7 @@ func TestGenerateJWTWithDifferentKeys(t *testing.T) {
 			}()
 
 			// 2.生成JWT
-			token, err := GenerateJWT("testuser", "test@example.com", time.Hour*24, false)
+			token, err := GenerateJWT(0, "testuser", "test@example.com", time.Hour*24, false)
 			assert.NoError(t, err)
 			assert.NotEmpty(t, token)
 
@@ -316,7 +316,7 @@ func TestGenerateJWTEdgeCases(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			token, err := GenerateJWT(tc.username, tc.email, tc.expireHour, tc.isRefreshToken)
+			token, err := GenerateJWT(0, tc.username, tc.email, tc.expireHour, tc.isRefreshToken)
 
 			if tc.expectError {
 				assert.Error(t, err)
@@ -355,7 +355,7 @@ func TestParseJWT(t *testing.T) {
 	config.AppConfig.Jwt.Key = "test_secret_key"
 
 	// 2.生成有效的JWT用于测试
-	validToken, err := GenerateJWT("testuser", "test@example.com", time.Hour*24, false)
+	validToken, err := GenerateJWT(0, "testuser", "test@example.com", time.Hour*24, false)
 	assert.NoError(t, err)
 
 	// 3.测试用例
@@ -436,7 +436,7 @@ func TestParseJWTWithDifferentKeys(t *testing.T) {
 
 	// 1.生成token
 	config.AppConfig.Jwt.Key = "original_key"
-	token, err := GenerateJWT("testuser", "test@example.com", time.Hour*24, false)
+	token, err := GenerateJWT(0, "testuser", "test@example.com", time.Hour*24, false)
 	assert.NoError(t, err)
 
 	// 2.使用正确密钥解析
@@ -488,7 +488,7 @@ func TestJWTIntegration(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 
 			// 1.生成JWT
-			token, err := GenerateJWT(tc.username, tc.email, tc.expireHour, tc.isRefreshToken)
+			token, err := GenerateJWT(0, tc.username, tc.email, tc.expireHour, tc.isRefreshToken)
 			assert.NoError(t, err)
 			assert.NotEmpty(t, token)
 
@@ -530,7 +530,7 @@ func TestJWTConcurrency(t *testing.T) {
 	// 3.启动多个goroutine同时生成JWT
 	for i := 0; i < numGoroutines; i++ {
 		go func(id int) {
-			token, err := GenerateJWT("user"+string(rune(id)), "user"+string(rune(id))+"@test.com", time.Hour*24, false)
+			token, err := GenerateJWT(0, "user"+string(rune(id)), "user"+string(rune(id))+"@test.com", time.Hour*24, false)
 			if err != nil {
 				errors <- err
 				return
