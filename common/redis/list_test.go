@@ -10,6 +10,7 @@ func Test_listClient(t *testing.T) {
 
 	//1.初始化链接
 	InitRedis()
+	defer CloseRedis()
 
 	//2.运行测试
 	t.Run("redis list客户端测试", func(t *testing.T) {

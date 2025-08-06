@@ -2,15 +2,13 @@
 package redis
 
 import (
-	"net-project-edu_manage/core/redis"
 	"time"
 )
 
 var (
-	DefaultExpire = time.Minute * 15 //默认过期时间
-)
-
-var (
-	rdb = redis.Rdb //redis实例
-	ctx = redis.Ctx //空白上下文
+	DefaultExpire   = time.Minute * 15 //默认过期时间
+	DefaultHost     = "127.0.0.1"      //默认redis地址
+	DefaultPort     = 6379             //默认redis端口
+	DefaultPassword = ""               //默认redis密码
+	DefaultDatabase = 0                //默认redis数据库
 )
