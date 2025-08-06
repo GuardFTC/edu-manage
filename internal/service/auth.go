@@ -3,12 +3,21 @@ package service
 
 import (
 	"errors"
+	"github.com/spf13/cast"
+	"net-project-edu_manage/internal/common/constant"
 	"net-project-edu_manage/internal/common/util"
-	"net-project-edu_manage/internal/infrastructure/db"
+	"net-project-edu_manage/internal/config"
+	"net-project-edu_manage/internal/infrastructure/db/model"
+	"net-project-edu_manage/internal/infrastructure/redis"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/res"
+	"net-project-edu_manage/internal/repository"
 	"sync"
+	"time"
 )
+
+// systemUserRepo 系统用户仓库
+var systemUserRepo = repository.NewSystemUserRepository()
 
 // AuthService 认证服务
 type AuthService struct {
@@ -16,24 +25,93 @@ type AuthService struct {
 }
 
 // Login 登录
-func (a *AuthService) Login(loginDto *dto.LoginDto) (string, error) {
+func (a *AuthService) Login(loginDto *dto.LoginDto) (*dto.LoginResultDto, error) {
 
 	//1.根据账号查询用户信息
-	systemUser, err := db.Q.SystemUser.
-		Where(db.Q.SystemUser.Name.Eq(loginDto.Account)).
-		Or(db.Q.SystemUser.Email.Eq(loginDto.Account)).
-		First()
+	systemUser, err := systemUserRepo.GetByAccount(loginDto.Account)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	//2.TODO 密码解密 获取密码原文
 
 	//3.比较密码
 	if err = util.VerifyPassword(systemUser.Password, loginDto.Password); err != nil {
-		return "", errors.New("password verify fail. " + res.UnProcessTag)
+		return nil, errors.New("password verify fail. " + res.UnProcessTag)
 	}
 
-	//4.登录成功，生成JWT Token，返回 TODO 后续添加记录登录信息到Redis等步骤
-	return util.GenerateJWT(systemUser.Name, systemUser.Email, 0)
+	//4.获取token
+	token, err := getToken(systemUser)
+	if err != nil {
+		return nil, err
+	}
+
+	//5.获取refreshToken
+	refreshToken, err := getRefreshToken(systemUser)
+	if err != nil {
+		return nil, err
+	}
+
+	//6.封装结构体
+	loginRes := &dto.LoginResultDto{
+		Token:        token,
+		RefreshToken: refreshToken,
+	}
+
+	//7.返回
+	return loginRes, nil
+}
+
+// getToken 获取token
+func getToken(systemUser *model.SystemUser) (string, error) {
+
+	//1.获取token过期时间
+	exp := time.Duration(config.AppConfig.Jwt.ExpireHour) * time.Hour
+
+	//2.获取token
+	token, _ := redis.HashClient.HGet(constant.LoginTokenKey, cast.ToString(systemUser.ID))
+
+	//3.token为空，生成token
+	if token == "" {
+
+		//4.生成token
+		t, err := util.GenerateJWT(systemUser.Name, systemUser.Email, exp)
+		if err != nil {
+			return "", err
+		}
+		token = t
+
+		//5.异步写入redis
+		go redis.HashClient.HSet(constant.LoginTokenKey, cast.ToString(systemUser.ID), token)
+	}
+
+	//6.返回
+	return token, nil
+}
+
+// getRefreshToken 获取refreshToken
+func getRefreshToken(systemUser *model.SystemUser) (string, error) {
+
+	//1.获取refreshToken过期时间
+	exp := time.Duration(config.AppConfig.Jwt.RefreshExpireHour) * time.Hour
+
+	//2.获取refreshToken
+	refreshToken, _ := redis.HashClient.HGet(constant.LoginRefreshTokenKey, cast.ToString(systemUser.ID))
+
+	//3.refreshToken为空，生成refreshToken
+	if refreshToken == "" {
+
+		//4.生成refreshToken
+		t, err := util.GenerateJWT(systemUser.Name, systemUser.Email, exp)
+		if err != nil {
+			return "", err
+		}
+		refreshToken = t
+
+		//5.异步写入redis
+		go redis.HashClient.HSet(constant.LoginRefreshTokenKey, cast.ToString(systemUser.ID), refreshToken)
+	}
+
+	//6.返回
+	return refreshToken, nil
 }

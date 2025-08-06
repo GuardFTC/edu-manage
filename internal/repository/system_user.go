@@ -1,0 +1,28 @@
+// Package repository @Author:冯铁城 [17615007230@163.com] 2025-08-06 15:02:45
+package repository
+
+import (
+	"net-project-edu_manage/internal/infrastructure/db"
+	"net-project-edu_manage/internal/infrastructure/db/model"
+)
+
+// SystemUserRepository 系统用户接口
+type SystemUserRepository interface {
+	GetByAccount(account string) (*model.SystemUser, error)
+}
+
+// SystemUserRepo 系统用户接口实现
+type SystemUserRepo struct{}
+
+// NewSystemUserRepository 创建系统用户接口实例
+func NewSystemUserRepository() *SystemUserRepo {
+	return &SystemUserRepo{}
+}
+
+// GetByAccount 根据账号获取系统用户
+func (r *SystemUserRepo) GetByAccount(account string) (*model.SystemUser, error) {
+	return db.Q.SystemUser.
+		Where(db.Q.SystemUser.Name.Eq(account)).
+		Or(db.Q.SystemUser.Email.Eq(account)).
+		First()
+}

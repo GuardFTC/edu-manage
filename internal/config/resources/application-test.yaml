@@ -27,7 +27,8 @@ log:
 # jwt配置
 jwt:
     key: 1xExqF2nM+wBkM9gX1yQhN+eR/3Lg5sRh2nRvJfGbSk=
-    expire_hour: 1000
+    expire_hour: 2
+    refresh_expire_hour: 168
 
 # redis配置
 redis:

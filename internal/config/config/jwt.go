@@ -3,6 +3,7 @@ package config
 
 // JwtConfig jwt配置
 type JwtConfig struct {
-	Key        string `mapstructure:"key"`
-	ExpireHour int    `mapstructure:"expire_hour"`
+	Key               string `mapstructure:"key"`
+	ExpireHour        int    `mapstructure:"expire_hour"`
+	RefreshExpireHour int    `mapstructure:"refresh_expire_hour"`
 }

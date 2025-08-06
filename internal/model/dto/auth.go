@@ -6,3 +6,9 @@ type LoginDto struct {
 	Account  string `json:"account" form:"account" binding:"required,max=128"`   //账号
 	Password string `json:"password" form:"password" binding:"required,max=128"` //密码
 }
+
+// LoginResultDto 登录结果
+type LoginResultDto struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refreshToken"`
+}
