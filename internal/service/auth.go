@@ -6,7 +6,6 @@ import (
 	"net-project-edu_manage/internal/common/constant"
 	"net-project-edu_manage/internal/common/util"
 	"net-project-edu_manage/internal/config"
-	"net-project-edu_manage/internal/infrastructure/db/model"
 	"net-project-edu_manage/internal/infrastructure/redis"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/res"
@@ -42,13 +41,13 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (*dto.LoginResultDto, error)
 	}
 
 	//4.获取token
-	token, err := getToken(systemUser)
+	token, err := getToken(systemUser.ID, systemUser.Name, systemUser.Email)
 	if err != nil {
 		return nil, err
 	}
 
 	//5.获取refreshToken
-	refreshToken, err := getRefreshToken(systemUser)
+	refreshToken, err := getRefreshToken(systemUser.ID, systemUser.Name, systemUser.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -64,24 +63,43 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (*dto.LoginResultDto, error)
 }
 
 // RefreshToken 刷新token
-func (a *AuthService) RefreshToken(token string) (*dto.LoginResultDto, error) {
-	return nil, nil
+func (a *AuthService) RefreshToken(refreshToken string, claims map[string]any) (*dto.LoginResultDto, error) {
+
+	//1.解析token参数
+	id := cast.ToInt64(claims["id"])
+	name := cast.ToString(claims["name"])
+	email := cast.ToString(claims["email"])
+
+	//2.生成token
+	token, err := getToken(id, name, email)
+	if err != nil {
+		return nil, err
+	}
+
+	//3.封装结构体
+	loginRes := &dto.LoginResultDto{
+		Token:        token,
+		RefreshToken: refreshToken,
+	}
+
+	//4.返回
+	return loginRes, nil
 }
 
 // getToken 获取token
-func getToken(systemUser *model.SystemUser) (string, error) {
+func getToken(id int64, username string, email string) (string, error) {
 
 	//1.获取token过期时间
 	exp := time.Duration(config.AppConfig.Jwt.ExpireHour) * time.Hour
 
 	//2.获取token
-	token, _ := redis.HashClient.HGet(constant.LoginTokenKey, cast.ToString(systemUser.ID))
+	token, _ := redis.HashClient.HGet(constant.LoginTokenKey, cast.ToString(id))
 
 	//3.token为空，生成token
 	if token == "" {
 
 		//4.生成token
-		t, err := util.GenerateJWT(systemUser.ID, systemUser.Name, systemUser.Email, exp, false)
+		t, err := util.GenerateJWT(id, username, email, exp, false)
 		if err != nil {
 			return "", err
 		}
@@ -89,14 +107,8 @@ func getToken(systemUser *model.SystemUser) (string, error) {
 
 		//5.异步写入redis
 		go func() {
-
-			//6.记录用户ID-Token
-			redis.HashClient.HSet(constant.LoginTokenKey, cast.ToString(systemUser.ID), token)
+			redis.HashClient.HSet(constant.LoginTokenKey, cast.ToString(id), token)
 			redis.StringClient.Expire(constant.LoginTokenKey, exp)
-
-			//7.记录Token-用户ID
-			redis.HashClient.HSet(constant.LoginTokenMapKey, token, cast.ToString(systemUser.ID))
-			redis.StringClient.Expire(constant.LoginTokenMapKey, exp)
 		}()
 	}
 
@@ -105,19 +117,19 @@ func getToken(systemUser *model.SystemUser) (string, error) {
 }
 
 // getRefreshToken 获取refreshToken
-func getRefreshToken(systemUser *model.SystemUser) (string, error) {
+func getRefreshToken(id int64, username string, email string) (string, error) {
 
 	//1.获取refreshToken过期时间
 	exp := time.Duration(config.AppConfig.Jwt.RefreshExpireHour) * time.Hour
 
 	//2.获取refreshToken
-	refreshToken, _ := redis.HashClient.HGet(constant.LoginRefreshTokenKey, cast.ToString(systemUser.ID))
+	refreshToken, _ := redis.HashClient.HGet(constant.LoginRefreshTokenKey, cast.ToString(id))
 
 	//3.refreshToken为空，生成refreshToken
 	if refreshToken == "" {
 
 		//4.生成refreshToken
-		t, err := util.GenerateJWT(systemUser.ID, systemUser.Name, systemUser.Email, exp, true)
+		t, err := util.GenerateJWT(id, username, email, exp, true)
 		if err != nil {
 			return "", err
 		}
@@ -125,7 +137,7 @@ func getRefreshToken(systemUser *model.SystemUser) (string, error) {
 
 		//5.异步写入redis
 		go func() {
-			redis.HashClient.HSet(constant.LoginRefreshTokenKey, cast.ToString(systemUser.ID), refreshToken)
+			redis.HashClient.HSet(constant.LoginRefreshTokenKey, cast.ToString(id), refreshToken)
 			redis.StringClient.Expire(constant.LoginRefreshTokenKey, exp)
 		}()
 	}

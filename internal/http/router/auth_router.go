@@ -2,8 +2,9 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"net-project-edu_manage/internal/http/handler"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 初始化系统管理-用户管理路由
@@ -14,6 +15,7 @@ func initAuthRouter(v *gin.RouterGroup) *gin.RouterGroup {
 
 	//2.定义接口路由
 	authRouter.POST("/login", handler.Login)
+	authRouter.POST("/refresh-token", handler.RefreshToken)
 
 	//3.返回
 	return authRouter

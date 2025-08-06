@@ -2,13 +2,14 @@
 package interceptor
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
 	"net-project-edu_manage/internal/common/constant"
 	"net-project-edu_manage/internal/common/util"
 	"net-project-edu_manage/internal/infrastructure/redis"
 	"net-project-edu_manage/internal/model/res"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 )
 
 // GetTokenHandler 获取Token处理器
@@ -43,21 +44,21 @@ func checkJWTToken(c *gin.Context) (map[string]any, bool) {
 		return nil, false
 	}
 
-	//2.判定token是否有效
-	exists, _ := redis.HashClient.HExists(constant.LoginTokenMapKey, token)
-	if !exists {
-		res.FailResToC(c, res.UnauthorizedFail, "token is invalid")
-		return nil, false
-	}
-
-	//3.解析JWT Token
+	//2.解析JWT Token
 	claims, err := util.ParseJWT(token)
 	if err != nil {
 		res.FailResToC(c, res.UnauthorizedFail, err.Error())
 		return nil, false
 	}
 
-	//4.判定token是否为合法token
+	//3. 判定redis是否包含当前token,
+	userId := cast.ToString(claims["id"])
+	tokenInRedis, err := redis.HashClient.HGet(constant.LoginTokenKey, userId)
+	if err != nil || tokenInRedis != token {
+		res.FailResToC(c, res.UnauthorizedFail, "token is invalid")
+	}
+
+	//4.判定token的签发时间是否正常
 	iat := cast.ToInt64(claims["iat"])
 	if time.Now().Unix() < iat {
 		res.FailResToC(c, res.UnauthorizedFail, "token is invalid")

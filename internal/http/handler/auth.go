@@ -2,10 +2,15 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
+	"net-project-edu_manage/internal/common/constant"
+	"net-project-edu_manage/internal/common/util"
+	"net-project-edu_manage/internal/infrastructure/redis"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/service"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 )
 
 var authService = new(service.AuthService)
@@ -23,12 +28,44 @@ func Login(c *gin.Context) {
 	}
 
 	//3.登录
-	jwtToken, err := authService.Login(loginDto)
+	loginRes, err := authService.Login(loginDto)
 	if err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
 	}
 
 	//4.返回
-	res.SuccessResToC(c, res.QuerySuccess, jwtToken)
+	res.SuccessResToC(c, res.QuerySuccess, loginRes)
+}
+
+// RefreshToken 刷新token
+func RefreshToken(c *gin.Context) {
+
+	//1.获取refreshToken
+	refreshToken := c.Query("refreshToken")
+
+	//2.判空
+	claims, err := util.ParseJWT(refreshToken)
+	if err != nil {
+		res.FailResToC(c, res.BadRequestFail, "refreshToken is invalid")
+		return
+	}
+
+	//3. 判定redis是否包含当前token,
+	userId := cast.ToString(claims["id"])
+	refreshTokenInRedis, err := redis.HashClient.HGet(constant.LoginRefreshTokenKey, userId)
+	if err != nil || refreshTokenInRedis != refreshToken {
+		res.FailResToC(c, res.BadRequestFail, "refreshToken is invalid")
+		return
+	}
+
+	//4.刷新token
+	refreshRes, err := authService.RefreshToken(refreshToken, claims)
+	if err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//5.返回
+	res.SuccessResToC(c, res.QuerySuccess, refreshRes)
 }
