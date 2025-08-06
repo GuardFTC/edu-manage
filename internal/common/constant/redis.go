@@ -2,6 +2,6 @@
 package constant
 
 var (
-	LoginTokenKey        = "login:token"         //登录tokenKey
-	LoginRefreshTokenKey = "login:refresh:token" //刷新tokenKey
+	LoginTokenKey        = "edu:login:token"         //登录tokenKey
+	LoginRefreshTokenKey = "edu:login:refresh-token" //刷新tokenKey
 )

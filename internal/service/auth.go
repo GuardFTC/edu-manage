@@ -75,14 +75,17 @@ func getToken(systemUser *model.SystemUser) (string, error) {
 	if token == "" {
 
 		//4.生成token
-		t, err := util.GenerateJWT(systemUser.Name, systemUser.Email, exp)
+		t, err := util.GenerateJWT(systemUser.Name, systemUser.Email, exp, false)
 		if err != nil {
 			return "", err
 		}
 		token = t
 
 		//5.异步写入redis
-		go redis.HashClient.HSet(constant.LoginTokenKey, cast.ToString(systemUser.ID), token)
+		go func() {
+			redis.HashClient.HSet(constant.LoginTokenKey, cast.ToString(systemUser.ID), token)
+			redis.StringClient.Expire(constant.LoginTokenKey, exp)
+		}()
 	}
 
 	//6.返回
@@ -102,14 +105,17 @@ func getRefreshToken(systemUser *model.SystemUser) (string, error) {
 	if refreshToken == "" {
 
 		//4.生成refreshToken
-		t, err := util.GenerateJWT(systemUser.Name, systemUser.Email, exp)
+		t, err := util.GenerateJWT(systemUser.Name, systemUser.Email, exp, true)
 		if err != nil {
 			return "", err
 		}
 		refreshToken = t
 
 		//5.异步写入redis
-		go redis.HashClient.HSet(constant.LoginRefreshTokenKey, cast.ToString(systemUser.ID), refreshToken)
+		go func() {
+			redis.HashClient.HSet(constant.LoginRefreshTokenKey, cast.ToString(systemUser.ID), refreshToken)
+			redis.StringClient.Expire(constant.LoginRefreshTokenKey, exp)
+		}()
 	}
 
 	//6.返回

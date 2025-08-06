@@ -13,20 +13,30 @@ import (
 var key = []byte(config.AppConfig.Jwt.Key)
 
 // GenerateJWT 生成JWT Token
-func GenerateJWT(username string, email string, expireHour time.Duration) (string, error) {
+func GenerateJWT(username string, email string, expireHour time.Duration, isRefreshToken bool) (string, error) {
 
 	//1.创建信息声明
-	claims := jwt.MapClaims{
-		"username": username,
-		"email":    email,
-		"exp":      time.Now().Add(expireHour * time.Hour).Unix(), // 过期时间
-		"iat":      time.Now().Unix(),                             // 签发时间
+	var claims jwt.MapClaims
+
+	//2.根据是否为刷新令牌，设置不同声明
+	if isRefreshToken {
+		claims = jwt.MapClaims{
+			"username": username,
+			"email":    email,
+		}
+	} else {
+		claims = jwt.MapClaims{
+			"username": username,
+			"email":    email,
+			"exp":      time.Now().Add(expireHour).Unix(), // 过期时间
+			"iat":      time.Now().Unix(),                 // 签发时间
+		}
 	}
 
-	//2.创建 token 对象
+	//3.创建 token 对象
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	//3.签名并获取完整的编码Token
+	//4.签名并获取完整的编码Token
 	if jwtToken, err := token.SignedString(key); err != nil {
 		return "", err
 	} else {
