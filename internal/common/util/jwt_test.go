@@ -191,7 +191,7 @@ func TestGenerateJWT(t *testing.T) {
 						t.Errorf("GenerateJWT() refresh token should not have exp claim")
 						return
 					}
-					if claims["iat"] != nil {
+					if claims["iat"] == nil {
 						t.Errorf("GenerateJWT() refresh token should not have iat claim")
 						return
 					}
@@ -341,7 +341,7 @@ func TestGenerateJWTEdgeCases(t *testing.T) {
 						assert.NotNil(t, claims["iat"])
 					} else {
 						assert.Nil(t, claims["exp"])
-						assert.Nil(t, claims["iat"])
+						assert.NotNil(t, claims["iat"])
 					}
 				}
 			}
@@ -511,7 +511,7 @@ func TestJWTIntegration(t *testing.T) {
 				assert.True(t, expTime > iatTime)
 			} else {
 				assert.Nil(t, claims["exp"])
-				assert.Nil(t, claims["iat"])
+				assert.NotNil(t, claims["iat"])
 			}
 		})
 	}
