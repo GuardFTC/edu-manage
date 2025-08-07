@@ -2,9 +2,10 @@
 package db
 
 import (
-	"gorm.io/gorm"
 	"net-project-edu_manage/internal/config"
 	"testing"
+
+	"gorm.io/gorm"
 )
 
 func Test_generate1(t *testing.T) {
@@ -13,7 +14,7 @@ func Test_generate1(t *testing.T) {
 	config.InitConfig()
 
 	//2.初始化DB
-	InitDbConn()
+	InitDbConn(&config.AppConfig.DataBaseSource)
 
 	//3.确保最终关闭数据库链接
 	defer CloseDbConn()
@@ -34,7 +35,7 @@ func Test_generate1(t *testing.T) {
 		{
 			name: "生成DAO层、Model代码",
 			args: args{
-				db: DB,
+				db: Master.db,
 				tables: []string{
 					"system_user",
 					"academic_year",

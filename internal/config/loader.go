@@ -4,18 +4,19 @@ package config
 import (
 	"bytes"
 	"fmt"
+	"net-project-edu_manage/internal/config/config"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"net-project-edu_manage/internal/config/config"
 )
 
 // Config 配置结构体
 type Config struct {
-	Database config.DatabaseConfig `mapstructure:"database"`
-	Server   config.ServerConfig   `mapstructure:"server"`
-	Log      config.LogConfig      `mapstructure:"log"`
-	Jwt      config.JwtConfig      `mapstructure:"jwt"`
-	Redis    config.RedisConfig    `mapstructure:"redis"`
+	DataBaseSource config.DataBaseSourceConfig `mapstructure:"database"`
+	Server         config.ServerConfig         `mapstructure:"server"`
+	Log            config.LogConfig            `mapstructure:"log"`
+	Jwt            config.JwtConfig            `mapstructure:"jwt"`
+	Redis          config.RedisConfig          `mapstructure:"redis"`
 }
 
 // AppConfig 项目总配置

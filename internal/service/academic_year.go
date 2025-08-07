@@ -2,10 +2,6 @@
 package service
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/copier"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cast"
 	"net-project-edu_manage/internal/infrastructure/db"
 	"net-project-edu_manage/internal/infrastructure/db/model"
 	"net-project-edu_manage/internal/infrastructure/db/query"
@@ -16,6 +12,11 @@ import (
 	"net-project-edu_manage/internal/model/vo"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 )
 
 // AcademicYearService 学年服务
@@ -25,7 +26,7 @@ type AcademicYearService struct {
 
 // Add 新增
 func (s *AcademicYearService) Add(c *gin.Context, academicYearDto *dto.AcademicYearDto) error {
-	return db.Q.Transaction(func(tx *query.Query) error {
+	return db.Master.GetQuery().Transaction(func(tx *query.Query) error {
 
 		//1.设置名称
 		academicYearDto.SetName()
@@ -54,7 +55,7 @@ func (s *AcademicYearService) Add(c *gin.Context, academicYearDto *dto.AcademicY
 
 // Delete 删除学年
 func (s *AcademicYearService) Delete(c *gin.Context, ids []string) error {
-	return db.Q.Transaction(func(tx *query.Query) error {
+	return db.Master.GetQuery().Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
 		intIds := cast.ToInt64Slice(ids)
@@ -76,7 +77,8 @@ func (s *AcademicYearService) Get(c *gin.Context, id string) (*dto.AcademicYearD
 	intId := cast.ToInt64(id)
 
 	//2.查询学年
-	academicYear, err := db.Q.AcademicYear.WithContext(c).Where(db.Q.AcademicYear.ID.Eq(intId)).First()
+	a := db.Master.GetQuery().AcademicYear
+	academicYear, err := a.WithContext(c).Where(a.ID.Eq(intId)).First()
 	if err != nil {
 		return nil, err
 	}
@@ -96,13 +98,14 @@ func (s *AcademicYearService) Get(c *gin.Context, id string) (*dto.AcademicYearD
 
 // Update 修改学年
 func (s *AcademicYearService) Update(c *gin.Context, id string, academicYearDto *dto.AcademicYearDto) error {
-	return db.Q.Transaction(func(tx *query.Query) error {
+	return db.Master.GetQuery().Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
 		intId := cast.ToInt64(id)
 
 		//2.查询学年
-		academicYear, err := db.Q.AcademicYear.WithContext(c).Where(db.Q.AcademicYear.ID.Eq(intId)).First()
+		a := db.Master.GetQuery().AcademicYear
+		academicYear, err := a.WithContext(c).Where(a.ID.Eq(intId)).First()
 		if err != nil {
 			return err
 		}
@@ -140,9 +143,9 @@ func (s *AcademicYearService) Page(c *gin.Context, request *request.AcademicYear
 	request.DefaultPage()
 
 	//2.设置别名，利于后续Join查询
-	ay := db.Q.AcademicYear.As("ay")
-	s1 := db.Q.SystemUser.As("s1")
-	s2 := db.Q.SystemUser.As("s2")
+	ay := db.Master.GetQuery().AcademicYear.As("ay")
+	s1 := db.Master.GetQuery().SystemUser.As("s1")
+	s2 := db.Master.GetQuery().SystemUser.As("s2")
 
 	//3.封装查询参数
 	context := ay.WithContext(c)

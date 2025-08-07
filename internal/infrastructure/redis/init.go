@@ -2,8 +2,9 @@
 package redis
 
 import (
-	"log"
 	"net-project-edu_manage/internal/config/config"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Client redis客户端

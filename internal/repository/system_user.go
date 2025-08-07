@@ -23,9 +23,9 @@ func NewSystemUserRepository() *SystemUserRepo {
 
 // GetByAccount 根据账号获取系统用户
 func (r *SystemUserRepo) GetByAccount(c *gin.Context, account string) (*model.SystemUser, error) {
-	return db.Q.SystemUser.
-		WithContext(c).
-		Where(db.Q.SystemUser.Name.Eq(account)).
-		Or(db.Q.SystemUser.Email.Eq(account)).
+	systemUser := db.Master.GetQuery().SystemUser
+	return systemUser.WithContext(c).
+		Where(systemUser.Name.Eq(account)).
+		Or(systemUser.Email.Eq(account)).
 		First()
 }

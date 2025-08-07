@@ -2,94 +2,52 @@
 package db
 
 import (
-	"fmt"
-	log "github.com/sirupsen/logrus"
-	"net-project-edu_manage/internal/config"
-	"net-project-edu_manage/internal/infrastructure/db/query"
-	"time"
+	"net-project-edu_manage/internal/config/config"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	log "github.com/sirupsen/logrus"
 )
 
-// DB 数据库连接
-var DB *gorm.DB
-
-// Q 数据库查询对象
-var Q *query.Query
+var (
+	Master *client
+	Slave1 *client
+)
 
 // InitDbConn 初始化数据库链接
-func InitDbConn() {
+func InitDbConn(dsConfig *config.DataBaseSourceConfig) {
 
-	//1.获取DSN
-	dsn := getDsn()
-
-	//2.打开数据库连接
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	//1.初始化主数据源
+	master, err := newClient(&dsConfig.Master)
 	if err != nil {
-		log.Fatalf("database connection error: %v", err)
+		log.Fatalf("database-%v connection error: %v", "master", err)
+	} else {
+		log.Printf("database-%v connection success", "master")
 	}
+	Master = master
 
-	//3.DB赋值
-	DB = db
-
-	//4.设置连接池参数
-	setConnPool()
-
-	//5.日志打印
-	log.Printf("database connection success")
-
-	//6.初始化查询对象
-	Q = query.Use(DB)
-
-	//7.日志打印
-	log.Printf("database query init success")
+	//2.初始化从数据源
+	slave1, err := newClient(&dsConfig.Slave1)
+	if err != nil {
+		log.Fatalf("database-%v connection error: %v", "slave1", err)
+	} else {
+		log.Printf("database-%v connection success", "slave1")
+	}
+	Slave1 = slave1
 }
 
 // CloseDbConn 关闭数据库连接
 func CloseDbConn() {
 
-	//1.获取底层sql.DB
-	sqlDb, err := DB.DB()
-	if err != nil {
-		log.Fatalf("get sql db connection error: %v", err)
-	}
-
-	//2.关闭数据库链接
-	if err = sqlDb.Close(); err == nil {
-		log.Printf("database connection closed success")
+	//1.关闭主数据源
+	if err := Master.Close(); err != nil {
+		log.Errorf("database-%v connection closed error: %v", "master", err)
 	} else {
-		log.Fatalf("database connection closed error")
-	}
-}
-
-// getDsn 获取DSN
-func getDsn() string {
-
-	//1.读取值
-	username := config.AppConfig.Database.Username
-	password := config.AppConfig.Database.Password
-	ip := config.AppConfig.Database.Host
-	dbName := config.AppConfig.Database.DBName
-	port := config.AppConfig.Database.Port
-	dsnConfig := config.AppConfig.Database.Config
-
-	//2.拼接DSN，返回
-	return fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?%v", username, password, ip, port, dbName, dsnConfig)
-}
-
-// setConnPool 设置连接池参数
-func setConnPool() {
-
-	//1.获取底层sql.DB
-	sqlDb, err := DB.DB()
-	if err != nil {
-		log.Fatalf("get sql db connection error: %v", err)
+		log.Printf("database-%v connection closed", "master")
 	}
 
-	//2.设置连接池参数
-	sqlDb.SetMaxOpenConns(config.AppConfig.Database.MaxOpenConns)                     // 最多20个连接
-	sqlDb.SetMaxIdleConns(config.AppConfig.Database.MaxIdleConns)                     // 最多10个空闲连接
-	sqlDb.SetConnMaxLifetime(config.AppConfig.Database.ConnMaxLifetime * time.Minute) // 每个连接最多用1分钟
-	sqlDb.SetConnMaxIdleTime(config.AppConfig.Database.ConnMaxIdleTime * time.Second) // 空闲超过30秒就关闭
+	//2.关闭从数据源
+	if err := Slave1.Close(); err == nil {
+		log.Errorf("database-%v connection closed error: %v", "slave1", err)
+	} else {
+		log.Printf("database-%v connection closed", "slave1")
+	}
 }

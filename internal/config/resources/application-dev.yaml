@@ -1,28 +1,40 @@
 # 数据库配置
 database:
 
-  #数据库链接参数
-  host: 127.0.0.1
-  port: 3306
-  username: root
-  password: root
-  dbname: edu_test
-  config: charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+    #主数据源链接配置
+    master:
+        host: 127.0.0.1
+        port: 3306
+        username: root
+        password: root
+        dbname: edu_test
+        config: charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+        max_open_conns: 20
+        max_idle_conns: 10
+        conn_max_lifetime: 1m
+        conn_max_idle_time: 30s
 
-  # 连接池配置
-  max_open_conns: 20
-  max_idle_conns: 10
-  conn_max_lifetime: 1m
-  conn_max_idle_time: 30s
+    #从数据源链接配置
+    slave1:
+         host: 127.0.0.1
+         port: 3306
+         username: root
+         password: root
+         dbname: edu_test
+         config: charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+         max_open_conns: 20
+         max_idle_conns: 10
+         conn_max_lifetime: 1m
+         conn_max_idle_time: 30s
 
 # 服务器配置
 server:
-  port: 8080
+    port: 8080
 
 # 日志配置
 log:
-  level: info
-  color: true
+    level: info
+    color: true
 
 # jwt配置
 jwt:
