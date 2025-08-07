@@ -25,6 +25,7 @@ func GenerateJWT(id int64, username string, email string, expireHour time.Durati
 			"id":       id,
 			"username": username,
 			"email":    email,
+			"iat":      time.Now().Unix(), // 签发时间
 		}
 	} else {
 		claims = jwt.MapClaims{
