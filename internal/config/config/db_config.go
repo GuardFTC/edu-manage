@@ -5,8 +5,8 @@ import "time"
 
 // DataBaseSourceConfig 数据库数据源配置结构体
 type DataBaseSourceConfig struct {
-	Master DatabaseConfig `mapstructure:"master"`
-	Slave1 DatabaseConfig `mapstructure:"slave1"`
+	Default string                    `mapstructure:"default"`
+	Sources map[string]DatabaseConfig `mapstructure:"sources"`
 }
 
 // DatabaseConfig 数据库配置结构体

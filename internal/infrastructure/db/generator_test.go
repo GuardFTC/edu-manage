@@ -35,7 +35,7 @@ func Test_generate1(t *testing.T) {
 		{
 			name: "生成DAO层、Model代码",
 			args: args{
-				db: Master.db,
+				db: GetDefaultDataSource().GetDB(),
 				tables: []string{
 					"system_user",
 					"academic_year",

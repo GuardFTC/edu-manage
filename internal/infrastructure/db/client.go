@@ -13,15 +13,15 @@ import (
 	"gorm.io/gorm"
 )
 
-// client 数据库客户端
-type client struct {
+// Client 数据库客户端
+type Client struct {
 	db    *gorm.DB
 	sqlDb *sql.DB
 	q     *query.Query
 }
 
 // NewClient 创建一个新的数据库客户端实例
-func newClient(dbConfig *config.DatabaseConfig) (*client, error) {
+func newClient(dbConfig *config.DatabaseConfig) (*Client, error) {
 
 	//1.获取主数据源DSN
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s", dbConfig.Username, dbConfig.Password, dbConfig.Host, cast.ToInt(dbConfig.Port), dbConfig.DBName, dbConfig.Config)
@@ -53,7 +53,7 @@ func newClient(dbConfig *config.DatabaseConfig) (*client, error) {
 	q := query.Use(db)
 
 	//7.创建客户端
-	dbClient := &client{
+	dbClient := &Client{
 		db:    db,
 		q:     q,
 		sqlDb: sqlDb,
@@ -64,7 +64,7 @@ func newClient(dbConfig *config.DatabaseConfig) (*client, error) {
 }
 
 // Close 关闭数据库连接
-func (c *client) Close() error {
+func (c *Client) Close() error {
 	if c.sqlDb != nil {
 		return c.sqlDb.Close()
 	}
@@ -72,21 +72,21 @@ func (c *client) Close() error {
 }
 
 // Ping 测试数据库连接
-func (c *client) Ping() error {
+func (c *Client) Ping() error {
 	return c.sqlDb.Ping()
 }
 
 // GetQuery 获取查询对象
-func (c *client) GetQuery() *query.Query {
+func (c *Client) GetQuery() *query.Query {
 	return c.q
 }
 
 // GetDB 获取数据库连接
-func (c *client) GetDB() *gorm.DB {
+func (c *Client) GetDB() *gorm.DB {
 	return c.db
 }
 
 // GetRawClient 获取原生数据库连接
-func (c *client) GetRawClient() *sql.DB {
+func (c *Client) GetRawClient() *sql.DB {
 	return c.sqlDb
 }

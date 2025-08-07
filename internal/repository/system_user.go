@@ -23,7 +23,7 @@ func NewSystemUserRepository() *SystemUserRepo {
 
 // GetByAccount 根据账号获取系统用户
 func (r *SystemUserRepo) GetByAccount(c *gin.Context, account string) (*model.SystemUser, error) {
-	systemUser := db.Master.GetQuery().SystemUser
+	systemUser := db.GetDefaultDataSource().GetQuery().SystemUser
 	return systemUser.WithContext(c).
 		Where(systemUser.Name.Eq(account)).
 		Or(systemUser.Email.Eq(account)).
