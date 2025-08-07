@@ -28,7 +28,7 @@ func Login(c *gin.Context) {
 	}
 
 	//3.登录
-	loginRes, err := authService.Login(loginDto)
+	loginRes, err := authService.Login(c, loginDto)
 	if err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
@@ -53,14 +53,14 @@ func RefreshToken(c *gin.Context) {
 
 	//3. 判定redis是否包含当前token,
 	userId := cast.ToString(claims["id"])
-	refreshTokenInRedis, err := redis.HashClient.HGet(constant.LoginRefreshTokenKey, userId)
+	refreshTokenInRedis, err := redis.Client.Hash.HGet(c, constant.LoginRefreshTokenKey, userId)
 	if err != nil || refreshTokenInRedis != refreshToken {
 		res.FailResToC(c, res.BadRequestFail, "refreshToken is invalid")
 		return
 	}
 
 	//4.刷新token
-	refreshRes, err := authService.RefreshToken(refreshToken, claims)
+	refreshRes, err := authService.RefreshToken(c, refreshToken, claims)
 	if err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return

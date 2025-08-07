@@ -19,8 +19,8 @@ func main() {
 	defer db.CloseDbConn()
 
 	//3.初始化Redis,确保最终关闭Redis链接
-	redis.InitRedis()
-	defer redis.CloseRedis()
+	redis.InitClient(&config.AppConfig.Redis)
+	defer redis.CloseClient()
 
 	//4.初始化路由
 	router.InitRouter()

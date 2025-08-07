@@ -4,6 +4,8 @@ package repository
 import (
 	"net-project-edu_manage/internal/infrastructure/db"
 	"net-project-edu_manage/internal/infrastructure/db/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 // SystemUserRepository 系统用户接口
@@ -20,8 +22,9 @@ func NewSystemUserRepository() *SystemUserRepo {
 }
 
 // GetByAccount 根据账号获取系统用户
-func (r *SystemUserRepo) GetByAccount(account string) (*model.SystemUser, error) {
+func (r *SystemUserRepo) GetByAccount(c *gin.Context, account string) (*model.SystemUser, error) {
 	return db.Q.SystemUser.
+		WithContext(c).
 		Where(db.Q.SystemUser.Name.Eq(account)).
 		Or(db.Q.SystemUser.Email.Eq(account)).
 		First()

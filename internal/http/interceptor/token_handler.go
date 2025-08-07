@@ -53,7 +53,7 @@ func checkJWTToken(c *gin.Context) (map[string]any, bool) {
 
 	//3. 判定redis是否包含当前token,
 	userId := cast.ToString(claims["id"])
-	tokenInRedis, err := redis.HashClient.HGet(constant.LoginTokenKey, userId)
+	tokenInRedis, err := redis.Client.Hash.HGet(c, constant.LoginTokenKey, userId)
 	if err != nil || tokenInRedis != token {
 		res.FailResToC(c, res.UnauthorizedFail, "token is invalid")
 	}

@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 )
 
@@ -25,10 +26,10 @@ type AuthService struct {
 }
 
 // Login 登录
-func (a *AuthService) Login(loginDto *dto.LoginDto) (*dto.LoginResultDto, error) {
+func (a *AuthService) Login(c *gin.Context, loginDto *dto.LoginDto) (*dto.LoginResultDto, error) {
 
 	//1.根据账号查询用户信息
-	systemUser, err := systemUserRepo.GetByAccount(loginDto.Account)
+	systemUser, err := systemUserRepo.GetByAccount(c, loginDto.Account)
 	if err != nil {
 		return nil, err
 	}
@@ -41,13 +42,13 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (*dto.LoginResultDto, error)
 	}
 
 	//4.获取token
-	token, err := getToken(systemUser.ID, systemUser.Name, systemUser.Email)
+	token, err := getToken(c, systemUser.ID, systemUser.Name, systemUser.Email)
 	if err != nil {
 		return nil, err
 	}
 
 	//5.获取refreshToken
-	refreshToken, err := getRefreshToken(systemUser.ID, systemUser.Name, systemUser.Email)
+	refreshToken, err := getRefreshToken(c, systemUser.ID, systemUser.Name, systemUser.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +64,7 @@ func (a *AuthService) Login(loginDto *dto.LoginDto) (*dto.LoginResultDto, error)
 }
 
 // RefreshToken 刷新token
-func (a *AuthService) RefreshToken(refreshToken string, claims map[string]any) (*dto.LoginResultDto, error) {
+func (a *AuthService) RefreshToken(c *gin.Context, refreshToken string, claims map[string]any) (*dto.LoginResultDto, error) {
 
 	//1.解析token参数
 	id := cast.ToInt64(claims["id"])
@@ -71,7 +72,7 @@ func (a *AuthService) RefreshToken(refreshToken string, claims map[string]any) (
 	email := cast.ToString(claims["email"])
 
 	//2.生成token
-	token, err := getToken(id, name, email)
+	token, err := getToken(c, id, name, email)
 	if err != nil {
 		return nil, err
 	}
@@ -87,13 +88,13 @@ func (a *AuthService) RefreshToken(refreshToken string, claims map[string]any) (
 }
 
 // getToken 获取token
-func getToken(id int64, username string, email string) (string, error) {
+func getToken(c *gin.Context, id int64, username string, email string) (string, error) {
 
 	//1.获取token过期时间
 	exp := time.Duration(config.AppConfig.Jwt.ExpireHour) * time.Hour
 
 	//2.获取token
-	token, _ := redis.HashClient.HGet(constant.LoginTokenKey, cast.ToString(id))
+	token, _ := redis.Client.Hash.HGet(c, constant.LoginTokenKey, cast.ToString(id))
 
 	//3.token为空，生成token
 	if token == "" {
@@ -107,8 +108,8 @@ func getToken(id int64, username string, email string) (string, error) {
 
 		//5.异步写入redis
 		go func() {
-			redis.HashClient.HSet(constant.LoginTokenKey, cast.ToString(id), token)
-			redis.StringClient.Expire(constant.LoginTokenKey, exp)
+			redis.Client.Hash.HSet(c, constant.LoginTokenKey, cast.ToString(id), token)
+			redis.Client.String.Expire(c, constant.LoginTokenKey, exp)
 		}()
 	}
 
@@ -117,13 +118,13 @@ func getToken(id int64, username string, email string) (string, error) {
 }
 
 // getRefreshToken 获取refreshToken
-func getRefreshToken(id int64, username string, email string) (string, error) {
+func getRefreshToken(c *gin.Context, id int64, username string, email string) (string, error) {
 
 	//1.获取refreshToken过期时间
 	exp := time.Duration(config.AppConfig.Jwt.RefreshExpireHour) * time.Hour
 
 	//2.获取refreshToken
-	refreshToken, _ := redis.HashClient.HGet(constant.LoginRefreshTokenKey, cast.ToString(id))
+	refreshToken, _ := redis.Client.Hash.HGet(c, constant.LoginRefreshTokenKey, cast.ToString(id))
 
 	//3.refreshToken为空，生成refreshToken
 	if refreshToken == "" {
@@ -137,8 +138,8 @@ func getRefreshToken(id int64, username string, email string) (string, error) {
 
 		//5.异步写入redis
 		go func() {
-			redis.HashClient.HSet(constant.LoginRefreshTokenKey, cast.ToString(id), refreshToken)
-			redis.StringClient.Expire(constant.LoginRefreshTokenKey, exp)
+			redis.Client.Hash.HSet(c, constant.LoginRefreshTokenKey, cast.ToString(id), refreshToken)
+			redis.Client.String.Expire(c, constant.LoginRefreshTokenKey, exp)
 		}()
 	}
 

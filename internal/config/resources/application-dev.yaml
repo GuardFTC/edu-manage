@@ -32,7 +32,12 @@ jwt:
 
 # redis配置
 redis:
-    host: 127.0.0.1
-    port: 6379
-    password:
-    database: 0
+    addr: localhost:6379
+    password: ""
+    db: 0
+    poolSize: 100
+    minIdleConns: 10
+    dialTimeout: 5s
+    readTimeout: 3s
+    writeTimeout: 3s
+    maxRetries: 3
