@@ -94,7 +94,7 @@ func getToken(c *gin.Context, id int64, username string, email string) (string, 
 	exp := time.Duration(config.AppConfig.Jwt.ExpireHour) * time.Hour
 
 	//2.获取token
-	token, _ := redis.Client.Hash.HGet(c, constant.LoginTokenKey, cast.ToString(id))
+	token, _ := redis.GetDefaultClient().Hash.HGet(c, constant.LoginTokenKey, cast.ToString(id))
 
 	//3.token为空，生成token
 	if token == "" {
@@ -108,8 +108,8 @@ func getToken(c *gin.Context, id int64, username string, email string) (string, 
 
 		//5.异步写入redis
 		go func() {
-			redis.Client.Hash.HSet(c, constant.LoginTokenKey, cast.ToString(id), token)
-			redis.Client.String.Expire(c, constant.LoginTokenKey, exp)
+			redis.GetDefaultClient().Hash.HSet(c, constant.LoginTokenKey, cast.ToString(id), token)
+			redis.GetDefaultClient().String.Expire(c, constant.LoginTokenKey, exp)
 		}()
 	}
 
@@ -124,7 +124,7 @@ func getRefreshToken(c *gin.Context, id int64, username string, email string) (s
 	exp := time.Duration(config.AppConfig.Jwt.RefreshExpireHour) * time.Hour
 
 	//2.获取refreshToken
-	refreshToken, _ := redis.Client.Hash.HGet(c, constant.LoginRefreshTokenKey, cast.ToString(id))
+	refreshToken, _ := redis.GetDefaultClient().Hash.HGet(c, constant.LoginRefreshTokenKey, cast.ToString(id))
 
 	//3.refreshToken为空，生成refreshToken
 	if refreshToken == "" {
@@ -138,8 +138,8 @@ func getRefreshToken(c *gin.Context, id int64, username string, email string) (s
 
 		//5.异步写入redis
 		go func() {
-			redis.Client.Hash.HSet(c, constant.LoginRefreshTokenKey, cast.ToString(id), refreshToken)
-			redis.Client.String.Expire(c, constant.LoginRefreshTokenKey, exp)
+			redis.GetDefaultClient().Hash.HSet(c, constant.LoginRefreshTokenKey, cast.ToString(id), refreshToken)
+			redis.GetDefaultClient().String.Expire(c, constant.LoginRefreshTokenKey, exp)
 		}()
 	}
 

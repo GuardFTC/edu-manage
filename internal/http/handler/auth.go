@@ -53,7 +53,7 @@ func RefreshToken(c *gin.Context) {
 
 	//3. 判定redis是否包含当前token,
 	userId := cast.ToString(claims["id"])
-	refreshTokenInRedis, err := redis.Client.Hash.HGet(c, constant.LoginRefreshTokenKey, userId)
+	refreshTokenInRedis, err := redis.GetDefaultClient().Hash.HGet(c, constant.LoginRefreshTokenKey, userId)
 	if err != nil || refreshTokenInRedis != refreshToken {
 		res.FailResToC(c, res.BadRequestFail, "refreshToken is invalid")
 		return
