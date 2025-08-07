@@ -3,7 +3,7 @@ package redis_test
 
 import (
 	"context"
-	"net-project-edu_manage/internal/config/config"
+	"net-project-edu_manage/internal/config"
 	"net-project-edu_manage/internal/infrastructure/redis"
 	"testing"
 
@@ -15,13 +15,13 @@ import (
 func Test_bitMapClient(t *testing.T) {
 
 	//1.初始化链接
-	defaultConfig := config.DefaultRedisConfig()
-	redis.InitClient(defaultConfig)
+	config.InitConfig()
+	redis.InitClient(&config.AppConfig.Redis)
 	defer redis.CloseClient()
 
 	//2.运行测试
 	t.Run("redis bitmap客户端测试", func(t *testing.T) {
-		b := redis.Client.Bitmap
+		b := redis.GetDefaultClient().Bitmap
 		ctx := context.Background()
 
 		//1.模拟用户签到场景 - 创建一个用户1月份的签到记录
@@ -305,14 +305,14 @@ func testOnlineUserStatistics(t *testing.T, b *bitmappkg.Client, ctx context.Con
 func cleanupBitmapKeys(t *testing.T, ctx context.Context, keys []string) {
 
 	//1.删除所有测试使用的key
-	_, err := redis.Client.String.Del(ctx, keys...)
+	_, err := redis.GetDefaultClient().String.Del(ctx, keys...)
 	if err != nil {
 		t.Error("清理测试数据失败")
 	}
 
 	//2.验证key已被删除
 	for _, key := range keys {
-		exists, err := redis.Client.String.Exists(ctx, key)
+		exists, err := redis.GetDefaultClient().String.Exists(ctx, key)
 		if exists != 0 || err != nil {
 			t.Errorf("key未被成功删除: %s", key)
 		}

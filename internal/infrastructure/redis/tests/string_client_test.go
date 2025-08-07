@@ -3,7 +3,7 @@ package redis_test
 
 import (
 	"context"
-	"net-project-edu_manage/internal/config/config"
+	"net-project-edu_manage/internal/config"
 	"testing"
 	"time"
 
@@ -14,13 +14,13 @@ import (
 func Test_stringClient(t *testing.T) {
 
 	//1.初始化链接
-	defaultConfig := config.DefaultRedisConfig()
-	redis.InitClient(defaultConfig)
+	config.InitConfig()
+	redis.InitClient(&config.AppConfig.Redis)
 	defer redis.CloseClient()
 
 	//2.运行测试
 	t.Run("redis string客户端测试", func(t *testing.T) {
-		s := redis.Client.String
+		s := redis.GetDefaultClient().String
 		ctx := context.Background()
 
 		//1.设置 key,使用默认过期时间

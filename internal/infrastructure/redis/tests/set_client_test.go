@@ -3,24 +3,24 @@ package redis_test
 
 import (
 	"context"
-	"net-project-edu_manage/internal/config/config"
+	"net-project-edu_manage/internal/config"
+	setpkg "net-project-edu_manage/internal/infrastructure/redis/set"
 	"sort"
 	"testing"
 
 	"net-project-edu_manage/internal/infrastructure/redis"
-	setpkg "net-project-edu_manage/internal/infrastructure/redis/set"
 )
 
 func Test_setClient(t *testing.T) {
 
 	//1.初始化链接
-	defaultConfig := config.DefaultRedisConfig()
-	redis.InitClient(defaultConfig)
+	config.InitConfig()
+	redis.InitClient(&config.AppConfig.Redis)
 	defer redis.CloseClient()
 
 	//2.运行测试
 	t.Run("redis set客户端测试", func(t *testing.T) {
-		s := redis.Client.Set
+		s := redis.GetDefaultClient().Set
 		ctx := context.Background()
 
 		//1.添加单个元素

@@ -15,7 +15,7 @@ var clients map[string]*Client
 
 // GetDefaultDataSource 获取默认数据源
 func GetDefaultDataSource() *Client {
-	return GetDataSource(con.AppConfig.DataBaseSource.Default)
+	return GetDataSource(con.AppConfig.DataBase.Default)
 }
 
 // GetDataSource 获取数据源
@@ -25,7 +25,7 @@ func GetDataSource(dsName string) *Client {
 
 // GetDefaultQuery 获取默认查询对象
 func GetDefaultQuery() *masterQuery.Query {
-	return GetQuery[*masterQuery.Query](con.AppConfig.DataBaseSource.Default)
+	return GetQuery[*masterQuery.Query](con.AppConfig.DataBase.Default)
 }
 
 // GetQuery 获取指定名称和类型的查询对象

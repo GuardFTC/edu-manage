@@ -3,7 +3,7 @@ package redis_test
 
 import (
 	"context"
-	"net-project-edu_manage/internal/config/config"
+	"net-project-edu_manage/internal/config"
 	"net-project-edu_manage/internal/infrastructure/redis"
 	"testing"
 
@@ -13,13 +13,13 @@ import (
 func Test_hashClient(t *testing.T) {
 
 	//1.初始化链接
-	defaultConfig := config.DefaultRedisConfig()
-	redis.InitClient(defaultConfig)
+	config.InitConfig()
+	redis.InitClient(&config.AppConfig.Redis)
 	defer redis.CloseClient()
 
 	//2.运行测试
 	t.Run("redis hash客户端测试", func(t *testing.T) {
-		h := redis.Client.Hash
+		h := redis.GetDefaultClient().Hash
 		ctx := context.Background()
 
 		//1.写入单个键值对（存在则覆盖）

@@ -3,7 +3,7 @@ package redis_test
 
 import (
 	"context"
-	"net-project-edu_manage/internal/config/config"
+	"net-project-edu_manage/internal/config"
 	"testing"
 
 	"net-project-edu_manage/internal/infrastructure/redis"
@@ -13,13 +13,13 @@ import (
 func Test_hyperLogLogClient(t *testing.T) {
 
 	//1.初始化链接
-	defaultConfig := config.DefaultRedisConfig()
-	redis.InitClient(defaultConfig)
+	config.InitConfig()
+	redis.InitClient(&config.AppConfig.Redis)
 	defer redis.CloseClient()
 
 	//2.运行测试
 	t.Run("redis hll客户端测试", func(t *testing.T) {
-		h := redis.Client.HLL
+		h := redis.GetDefaultClient().HLL
 		ctx := context.Background()
 
 		//1.添加单个元素到HyperLogLog
@@ -149,14 +149,14 @@ func testBulkHyperLogLog(t *testing.T, h *hllpkg.Client, ctx context.Context, ke
 func cleanupHLLKeys(t *testing.T, ctx context.Context, keys []string) {
 
 	//1.删除所有测试使用的key
-	_, err := redis.Client.String.Del(ctx, keys...)
+	_, err := redis.GetDefaultClient().String.Del(ctx, keys...)
 	if err != nil {
 		t.Error("清理测试数据失败")
 	}
 
 	//2.验证key已被删除
 	for _, key := range keys {
-		exists, err := redis.Client.String.Exists(ctx, key)
+		exists, err := redis.GetDefaultClient().String.Exists(ctx, key)
 		if exists != 0 || err != nil {
 			t.Errorf("key未被成功删除: %s", key)
 		}

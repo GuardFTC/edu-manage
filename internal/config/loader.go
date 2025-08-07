@@ -12,11 +12,11 @@ import (
 
 // Config 配置结构体
 type Config struct {
-	DataBaseSource config.DataBaseSourceConfig `mapstructure:"database"`
-	Server         config.ServerConfig         `mapstructure:"server"`
-	Log            config.LogConfig            `mapstructure:"log"`
-	Jwt            config.JwtConfig            `mapstructure:"jwt"`
-	Redis          config.RedisConfig          `mapstructure:"redis"`
+	DataBase config.DataBaseSourceConfig `mapstructure:"database"`
+	Server   config.ServerConfig         `mapstructure:"server"`
+	Log      config.LogConfig            `mapstructure:"log"`
+	Jwt      config.JwtConfig            `mapstructure:"jwt"`
+	Redis    config.RedisSourceConfig    `mapstructure:"redis"`
 }
 
 // AppConfig 项目总配置

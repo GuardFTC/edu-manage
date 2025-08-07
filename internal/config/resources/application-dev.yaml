@@ -24,7 +24,7 @@ database:
              port: 3306
              username: root
              password: root
-             dbname: server_bi
+             dbname: edu_test
              config: charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
              max_open_conns: 20
              max_idle_conns: 10
@@ -51,12 +51,31 @@ jwt:
 
 # redis配置
 redis:
-    addr: localhost:6379
-    password: ""
-    db: 0
-    poolSize: 100
-    minIdleConns: 10
-    dialTimeout: 5s
-    readTimeout: 3s
-    writeTimeout: 3s
-    maxRetries: 3
+
+    #数据源配置
+    default: master
+    sources:
+
+        #主数据源配置
+        master:
+            addr: localhost:6379
+            password: ""
+            db: 0
+            poolSize: 100
+            minIdleConns: 10
+            dialTimeout: 5s
+            readTimeout: 3s
+            writeTimeout: 3s
+            maxRetries: 3
+
+        #从数据源配置
+        slave1:
+            addr: localhost:6379
+            password: ""
+            db: 1
+            poolSize: 100
+            minIdleConns: 10
+            dialTimeout: 5s
+            readTimeout: 3s
+            writeTimeout: 3s
+            maxRetries: 3

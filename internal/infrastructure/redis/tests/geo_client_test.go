@@ -3,7 +3,7 @@ package redis_test
 
 import (
 	"context"
-	"net-project-edu_manage/internal/config/config"
+	"net-project-edu_manage/internal/config"
 	"net-project-edu_manage/internal/infrastructure/redis"
 	"testing"
 
@@ -15,13 +15,13 @@ import (
 func Test_geoClient(t *testing.T) {
 
 	//1.初始化链接
-	defaultConfig := config.DefaultRedisConfig()
-	redis.InitClient(defaultConfig)
+	config.InitConfig()
+	redis.InitClient(&config.AppConfig.Redis)
 	defer redis.CloseClient()
 
 	//2.运行测试
 	t.Run("redis geo客户端测试", func(t *testing.T) {
-		g := redis.Client.Geo
+		g := redis.GetDefaultClient().Geo
 		ctx := context.Background()
 
 		//1.添加单个地理位置
@@ -140,7 +140,7 @@ func Test_geoClient(t *testing.T) {
 		}
 
 		//15.清理测试数据
-		_, err = redis.Client.GetRawClient().Del(ctx, "geo_key").Result()
+		_, err = redis.GetDefaultClient().GetRawClient().Del(ctx, "geo_key").Result()
 		if err != nil {
 			t.Error("清理数据失败")
 		}

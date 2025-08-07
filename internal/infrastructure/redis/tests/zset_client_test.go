@@ -3,7 +3,7 @@ package redis_test
 
 import (
 	"context"
-	"net-project-edu_manage/internal/config/config"
+	"net-project-edu_manage/internal/config"
 	"strconv"
 	"testing"
 
@@ -16,13 +16,13 @@ import (
 func Test_zSetClient(t *testing.T) {
 
 	//1.初始化链接
-	defaultConfig := config.DefaultRedisConfig()
-	redis.InitClient(defaultConfig)
+	config.InitConfig()
+	redis.InitClient(&config.AppConfig.Redis)
 	defer redis.CloseClient()
 
 	//2.运行测试
 	t.Run("redis zset客户端测试", func(t *testing.T) {
-		z := redis.Client.ZSet
+		z := redis.GetDefaultClient().ZSet
 		ctx := context.Background()
 
 		//1.添加单个元素到有序集合

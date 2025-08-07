@@ -18,8 +18,8 @@ import (
 	zsetpkg "net-project-edu_manage/internal/infrastructure/redis/zset"
 )
 
-// client 是统一的Redis客户端，提供所有数据类型操作的入口
-type client struct {
+// Client 是统一的Redis客户端，提供所有数据类型操作的入口
+type Client struct {
 	rdb    *redis.Client     // 底层go-redis客户端
 	String *stringpkg.Client // 字符串操作客户端
 	Hash   *hashpkg.Client   // 哈希操作客户端
@@ -32,7 +32,7 @@ type client struct {
 }
 
 // NewClient 创建一个新的Redis客户端实例
-func newClient(config *config.RedisConfig) (*client, error) {
+func newClient(config *config.RedisConfig) (*Client, error) {
 
 	//1.创建底层go-redis客户端
 	rdb := redis.NewClient(&redis.Options{
@@ -54,7 +54,7 @@ func newClient(config *config.RedisConfig) (*client, error) {
 	}
 
 	//3.创建统一客户端，组装各个数据类型的操作客户端
-	redisClient := &client{
+	redisClient := &Client{
 		rdb:    rdb,
 		String: stringpkg.New(rdb),
 		Hash:   hashpkg.New(rdb),
@@ -71,7 +71,7 @@ func newClient(config *config.RedisConfig) (*client, error) {
 }
 
 // Close 关闭Redis连接
-func (c *client) Close() error {
+func (c *Client) Close() error {
 	if c.rdb != nil {
 		return c.rdb.Close()
 	}
@@ -79,11 +79,11 @@ func (c *client) Close() error {
 }
 
 // Ping 测试Redis连接是否正常
-func (c *client) Ping(ctx context.Context) error {
+func (c *Client) Ping(ctx context.Context) error {
 	return c.rdb.Ping(ctx).Err()
 }
 
 // GetRawClient 获取底层的go-redis客户端（高级用法）
-func (c *client) GetRawClient() *redis.Client {
+func (c *Client) GetRawClient() *redis.Client {
 	return c.rdb
 }

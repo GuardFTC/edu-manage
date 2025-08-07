@@ -15,7 +15,7 @@ func main() {
 	config.InitConfig()
 
 	//2.初始化DB,确保最终关闭数据库链接
-	db.InitDbConn(&config.AppConfig.DataBaseSource)
+	db.InitDbConn(&config.AppConfig.DataBase)
 	defer db.CloseDbConn()
 
 	//3.初始化Redis,确保最终关闭Redis链接

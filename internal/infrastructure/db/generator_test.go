@@ -14,7 +14,7 @@ func Test_generate1(t *testing.T) {
 	config.InitConfig()
 
 	//2.初始化DB
-	InitDbConn(&config.AppConfig.DataBaseSource)
+	InitDbConn(&config.AppConfig.DataBase)
 
 	//3.确保最终关闭数据库链接
 	defer CloseDbConn()
@@ -62,7 +62,7 @@ func Test_generate2(t *testing.T) {
 	config.InitConfig()
 
 	//2.初始化DB
-	InitDbConn(&config.AppConfig.DataBaseSource)
+	InitDbConn(&config.AppConfig.DataBase)
 
 	//3.确保最终关闭数据库链接
 	defer CloseDbConn()

@@ -3,7 +3,7 @@ package redis_test
 
 import (
 	"context"
-	"net-project-edu_manage/internal/config/config"
+	"net-project-edu_manage/internal/config"
 	"net-project-edu_manage/internal/infrastructure/redis"
 	"testing"
 	"time"
@@ -14,13 +14,13 @@ import (
 func Test_listClient(t *testing.T) {
 
 	//1.初始化链接
-	defaultConfig := config.DefaultRedisConfig()
-	redis.InitClient(defaultConfig)
+	config.InitConfig()
+	redis.InitClient(&config.AppConfig.Redis)
 	defer redis.CloseClient()
 
 	//2.运行测试
 	t.Run("redis list客户端测试", func(t *testing.T) {
-		l := redis.Client.List
+		l := redis.GetDefaultClient().List
 		ctx := context.Background()
 
 		//1.左端推入元素（Key不存在创建Key）
