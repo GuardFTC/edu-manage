@@ -4,8 +4,8 @@ package service
 import (
 	"net-project-edu_manage/internal/common/util"
 	"net-project-edu_manage/internal/infrastructure/db"
-	"net-project-edu_manage/internal/infrastructure/db/model"
-	"net-project-edu_manage/internal/infrastructure/db/query"
+	"net-project-edu_manage/internal/infrastructure/db/master/model"
+	"net-project-edu_manage/internal/infrastructure/db/master/query"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/request"
 	"net-project-edu_manage/internal/model/res"
@@ -25,7 +25,7 @@ type SystemUserService struct {
 
 // Add 新增系统用户
 func (sys *SystemUserService) Add(c *gin.Context, systemUserDTO *dto.SystemUserDto) error {
-	return db.GetDefaultDataSource().GetQuery().Transaction(func(tx *query.Query) error {
+	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
 
 		//1.密码加密
 		if password, err := util.HashPassword(systemUserDTO.Password); err != nil {
@@ -59,7 +59,7 @@ func (sys *SystemUserService) Add(c *gin.Context, systemUserDTO *dto.SystemUserD
 
 // Delete 删除系统用户
 func (sys *SystemUserService) Delete(c *gin.Context, ids []string) error {
-	return db.GetDefaultDataSource().GetQuery().Transaction(func(tx *query.Query) error {
+	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
 		intIds := cast.ToInt64Slice(ids)
@@ -81,7 +81,7 @@ func (sys *SystemUserService) Get(c *gin.Context, id string) (*dto.SystemUserDto
 	intId := cast.ToInt64(id)
 
 	//2.查询系统用户
-	s := db.GetDefaultDataSource().GetQuery().SystemUser
+	s := db.GetDefaultQuery().SystemUser
 	systemUser, err := s.WithContext(c).Where(s.ID.Eq(intId)).First()
 	if err != nil {
 		return nil, err
@@ -102,13 +102,13 @@ func (sys *SystemUserService) Get(c *gin.Context, id string) (*dto.SystemUserDto
 
 // Update 修改系统用户
 func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDto) error {
-	return db.GetDefaultDataSource().GetQuery().Transaction(func(tx *query.Query) error {
+	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
 		intId := cast.ToInt64(id)
 
 		//2.查询系统用户
-		s := db.GetDefaultDataSource().GetQuery().SystemUser
+		s := db.GetDefaultQuery().SystemUser
 		systemUser, err := s.WithContext(c).Where(s.ID.Eq(intId)).First()
 		if err != nil {
 			return err
@@ -148,9 +148,9 @@ func (sys *SystemUserService) Page(c *gin.Context, request *request.SystemUserRe
 	request.DefaultPage()
 
 	//2.设置别名，利于后续Join查询
-	s := db.GetDefaultDataSource().GetQuery().SystemUser.As("s")
-	s1 := db.GetDefaultDataSource().GetQuery().SystemUser.As("s1")
-	s2 := db.GetDefaultDataSource().GetQuery().SystemUser.As("s2")
+	s := db.GetDefaultQuery().SystemUser.As("s")
+	s1 := db.GetDefaultQuery().SystemUser.As("s1")
+	s2 := db.GetDefaultQuery().SystemUser.As("s2")
 
 	//3.封装查询参数
 	context := s.WithContext(c)

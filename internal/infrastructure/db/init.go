@@ -4,6 +4,8 @@ package db
 import (
 	con "net-project-edu_manage/internal/config"
 	"net-project-edu_manage/internal/config/config"
+	masterQuery "net-project-edu_manage/internal/infrastructure/db/master/query"
+	slave1Query "net-project-edu_manage/internal/infrastructure/db/slave1/query"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -19,6 +21,27 @@ func GetDefaultDataSource() *Client {
 // GetDataSource 获取数据源
 func GetDataSource(dsName string) *Client {
 	return clients[dsName]
+}
+
+// GetDefaultQuery 获取默认查询对象
+func GetDefaultQuery() *masterQuery.Query {
+	return GetQuery[*masterQuery.Query](con.AppConfig.DataBaseSource.Default)
+}
+
+// GetQuery 获取指定名称和类型的查询对象
+func GetQuery[T any](dsName string) T {
+
+	//1.获取客户端
+	dbClient := GetDataSource(dsName)
+
+	//2.类型断言，将 interface{} 转为调用者期望的具体类型 T
+	typedQuery, ok := dbClient.GetQuery().(T)
+	if !ok {
+		log.Panicf("database client '%s' has incorrect query type", dsName)
+	}
+
+	//3.返回
+	return typedQuery
 }
 
 // InitDbConn 初始化数据库链接
@@ -39,6 +62,16 @@ func InitDbConn(dsConfig *config.DataBaseSourceConfig) {
 		} else {
 			clients[dsName] = dbClient
 			log.Printf("database-%v connection success", dsName)
+		}
+
+		//5.根据数据源名称，设置客户端的query对象
+		switch dsName {
+		case "master":
+			dbClient.q = masterQuery.Use(dbClient.GetDB())
+		case "slave1":
+			dbClient.q = slave1Query.Use(dbClient.GetDB())
+		default:
+			log.Fatalf("unknown database source: %s", dsName)
 		}
 	}
 }

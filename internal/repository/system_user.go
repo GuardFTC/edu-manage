@@ -3,7 +3,7 @@ package repository
 
 import (
 	"net-project-edu_manage/internal/infrastructure/db"
-	"net-project-edu_manage/internal/infrastructure/db/model"
+	"net-project-edu_manage/internal/infrastructure/db/master/model"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +23,7 @@ func NewSystemUserRepository() *SystemUserRepo {
 
 // GetByAccount 根据账号获取系统用户
 func (r *SystemUserRepo) GetByAccount(c *gin.Context, account string) (*model.SystemUser, error) {
-	systemUser := db.GetDefaultDataSource().GetQuery().SystemUser
+	systemUser := db.GetDefaultQuery().SystemUser
 	return systemUser.WithContext(c).
 		Where(systemUser.Name.Eq(account)).
 		Or(systemUser.Email.Eq(account)).

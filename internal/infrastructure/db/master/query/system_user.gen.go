@@ -7,7 +7,6 @@ package query
 import (
 	"context"
 	"database/sql"
-	"net-project-edu_manage/internal/infrastructure/db/model"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -17,6 +16,8 @@ import (
 	"gorm.io/gen/field"
 
 	"gorm.io/plugin/dbresolver"
+
+	"net-project-edu_manage/internal/infrastructure/db/master/model"
 )
 
 func newSystemUser(db *gorm.DB, opts ...gen.DOOption) systemUser {

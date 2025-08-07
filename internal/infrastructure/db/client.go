@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net-project-edu_manage/internal/config/config"
-	"net-project-edu_manage/internal/infrastructure/db/query"
 	"time"
 
 	"github.com/spf13/cast"
@@ -17,7 +16,7 @@ import (
 type Client struct {
 	db    *gorm.DB
 	sqlDb *sql.DB
-	q     *query.Query
+	q     any
 }
 
 // NewClient 创建一个新的数据库客户端实例
@@ -49,13 +48,9 @@ func newClient(dbConfig *config.DatabaseConfig) (*Client, error) {
 		return nil, err
 	}
 
-	//6.生成gen查询对象
-	q := query.Use(db)
-
-	//7.创建客户端
+	//6.创建客户端
 	dbClient := &Client{
 		db:    db,
-		q:     q,
 		sqlDb: sqlDb,
 	}
 
@@ -77,7 +72,7 @@ func (c *Client) Ping() error {
 }
 
 // GetQuery 获取查询对象
-func (c *Client) GetQuery() *query.Query {
+func (c *Client) GetQuery() any {
 	return c.q
 }
 
