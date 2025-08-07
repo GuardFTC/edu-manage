@@ -24,10 +24,13 @@ func GetClient(rsName string) *Client {
 // InitClient 初始化redis客户端
 func InitClient(rsConfig *config.RedisSourceConfig) {
 
-	//1.遍历Redis数据源配置
+	//1.初始化map
+	clients = make(map[string]*Client, len(rsConfig.Sources))
+
+	//2.遍历Redis数据源配置
 	for rsName, redisConfig := range rsConfig.Sources {
 
-		//2.初始化Redis客户端
+		//3.初始化Redis客户端
 		rsClient, err := newClient(&redisConfig)
 		if err != nil {
 			log.Fatalf("redis-%v connection error: %v", rsName, err)
@@ -35,7 +38,7 @@ func InitClient(rsConfig *config.RedisSourceConfig) {
 			log.Printf("redis-%v connection success", rsName)
 		}
 
-		//3.存入map
+		//4.存入map
 		clients[rsName] = rsClient
 	}
 }

@@ -20,7 +20,7 @@ func Test_stringClient(t *testing.T) {
 
 	//2.运行测试
 	t.Run("redis string客户端测试", func(t *testing.T) {
-		s := redis.GetDefaultClient().String
+		s := redis.GetClient("slave1").String
 		ctx := context.Background()
 
 		//1.设置 key,使用默认过期时间
