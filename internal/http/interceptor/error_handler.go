@@ -2,10 +2,11 @@
 package interceptor
 
 import (
+	"net-project-edu_manage/internal/model/res"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
-	"net-project-edu_manage/internal/model/res"
 )
 
 // GetErrorHandler 获取错误处理器

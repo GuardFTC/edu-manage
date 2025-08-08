@@ -3,6 +3,7 @@ package util
 
 import (
 	"errors"
+
 	"golang.org/x/crypto/bcrypt"
 )
 

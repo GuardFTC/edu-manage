@@ -2,8 +2,9 @@
 package base
 
 import (
-	"github.com/gin-gonic/gin"
 	"net-project-edu_manage/internal/common/util"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Dto 基础DTO

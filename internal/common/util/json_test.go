@@ -457,7 +457,7 @@ func TestJSONEdgeCases(t *testing.T) {
 		assert.Equal(t, minInt, result)
 
 		// 3.测试空切片
-		emptySlice := []string{}
+		var emptySlice []string
 		jsonStr, err = ToJSON(emptySlice)
 		assert.NoError(t, err)
 		assert.Equal(t, "[]", jsonStr)

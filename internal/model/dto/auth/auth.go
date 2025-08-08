@@ -1,4 +1,4 @@
-// Package dto @Author:冯铁城 [17615007230@163.com] 2025-08-01 19:15:33
+// Package auth @Author:冯铁城 [17615007230@163.com] 2025-08-01 19:15:33
 package auth
 
 // LoginDto 登录参数
