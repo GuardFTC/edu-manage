@@ -56,5 +56,8 @@ func initModelRouter() {
 	system.InitSystemUserRouter(v1, tokenHandler)
 
 	//5.定义v1-年级管理-学年路由组
-	grade.InitAcademicYearRouter(v1, tokenHandler)
+	yearRouter := grade.InitAcademicYearRouter(v1, tokenHandler)
+
+	//6.定义v1-年级管理-年级路由组
+	grade.InitGradeRouter(yearRouter, tokenHandler)
 }
