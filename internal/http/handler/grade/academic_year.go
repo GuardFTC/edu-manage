@@ -1,12 +1,13 @@
 // Package handler @Author:冯铁城 [17615007230@163.com] 2025-08-04 16:37:12
-package handler
+package grade
 
 import (
-	"github.com/gin-gonic/gin"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/request"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 // AcademicYearService 学年服务

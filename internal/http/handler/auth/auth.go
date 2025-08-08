@@ -1,5 +1,5 @@
 // Package handler @Author:冯铁城 [17615007230@163.com] 2025-08-01 17:52:00
-package handler
+package auth
 
 import (
 	"net-project-edu_manage/internal/common/constant"

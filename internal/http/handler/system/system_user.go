@@ -1,12 +1,13 @@
 // Package handler @Author:冯铁城 [17615007230@163.com] 2025-07-30 17:32:15
-package handler
+package system
 
 import (
-	"github.com/gin-gonic/gin"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/request"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/service"
+
+	"github.com/gin-gonic/gin"
 )
 
 // systemUserService 系统用户服务

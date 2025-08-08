@@ -2,9 +2,13 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"net-project-edu_manage/internal/http/interceptor"
+	"net-project-edu_manage/internal/http/router/auth"
+	"net-project-edu_manage/internal/http/router/grade"
+	"net-project-edu_manage/internal/http/router/system"
 	"net-project-edu_manage/internal/http/validate"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Router 核心路由
@@ -46,11 +50,11 @@ func initModelRouter() {
 	v1 := Router.Group("api/v1")
 
 	//3.定义v1-鉴权路由组
-	initAuthRouter(v1)
+	auth.InitAuthRouter(v1)
 
 	//4.定义v1-系统管理-用户管理路由组
-	initSystemUserRouter(v1, tokenHandler)
+	system.InitSystemUserRouter(v1, tokenHandler)
 
 	//5.定义v1-年级管理-学年路由组
-	initAcademicYearRouter(v1, tokenHandler)
+	grade.InitAcademicYearRouter(v1, tokenHandler)
 }
