@@ -20,6 +20,7 @@ func InitAcademicYearRouter(v *gin.RouterGroup, tokenHandler gin.HandlerFunc) *g
 	academicYearRouter.GET(":id", grade.GetAcademicYear)
 	academicYearRouter.PUT(":id", grade.UpdateAcademicYear)
 	academicYearRouter.GET("", grade.PageAcademicYear)
+	academicYearRouter.GET(":id/grades", grade.GetYearGrade)
 
 	//3.返回
 	return academicYearRouter

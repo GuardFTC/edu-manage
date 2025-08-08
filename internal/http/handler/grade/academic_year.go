@@ -141,3 +141,20 @@ func PageAcademicYear(c *gin.Context) {
 	//4.返回
 	res.SuccessResToC(c, res.QuerySuccess, pageRes)
 }
+
+// GetYearGrade 获取学年对应的年级
+func GetYearGrade(c *gin.Context) {
+
+	//1.获取路径参数
+	id := c.Param("id")
+
+	//2.分页查询
+	gradeVos, err := academicYearService.Grades(c, id)
+	if err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//3.返回
+	res.SuccessResToC(c, res.QuerySuccess, gradeVos)
+}

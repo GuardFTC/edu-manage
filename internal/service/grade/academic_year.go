@@ -209,3 +209,34 @@ func (s *AcademicYearService) Page(c *gin.Context, request *reqPack.AcademicYear
 	//9.封装分页结果
 	return res.CreatePageResult[*voPack.AcademicYearVo](&request.Request, total, academicYearVos), nil
 }
+
+// Grades 获取指定学年的班级列表
+func (s *AcademicYearService) Grades(c *gin.Context, id string) ([]*voPack.SimpleGradeVo, error) {
+
+	//1.id string 转 int64
+	intId := cast.ToInt64(id)
+
+	//2.设置别名，利于后续Join查询
+	g := db.GetDefaultQuery().Grade.As("g")
+	gy := db.GetDefaultQuery().GradeYear.As("gy")
+
+	//3.查询
+	var gradeVos []*voPack.SimpleGradeVo
+	err := g.WithContext(c).
+		Select(g.ID, g.Name).
+		Join(gy, g.ID.EqCol(gy.GradeID)).
+		Where(gy.AcademicYearID.Eq(intId)).
+		Order(g.ID.Desc()).
+		Scan(&gradeVos)
+	if err != nil {
+		return nil, err
+	}
+
+	//4.空值处理
+	if gradeVos == nil {
+		return make([]*voPack.SimpleGradeVo, 0), nil
+	}
+
+	//5.返回
+	return gradeVos, nil
+}
