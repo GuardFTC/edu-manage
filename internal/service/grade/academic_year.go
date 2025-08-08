@@ -65,6 +65,15 @@ func (s *AcademicYearService) Delete(c *gin.Context, ids []string) error {
 			return err
 		} else {
 			log.Printf("删除学年成功,删除数量:%d", delRes.RowsAffected)
+		}
+
+		//3.删除年级-学年关联
+		if delRes, err := tx.GradeYear.WithContext(c).Where(
+			tx.GradeYear.AcademicYearID.In(intIds...),
+		).Delete(); err != nil {
+			return err
+		} else {
+			log.Printf("删除年级-学年关联成功,删除数量:%d", delRes.RowsAffected)
 			return nil
 		}
 	})

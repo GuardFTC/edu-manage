@@ -11,14 +11,14 @@ import (
 func InitGradeRouter(v *gin.RouterGroup, tokenHandler gin.HandlerFunc) *gin.RouterGroup {
 
 	//1.定义用户管理路由组
-	academicYearRouter := v.Group("/:id/grades")
+	academicYearRouter := v.Group("grades")
 	academicYearRouter.Use(tokenHandler)
 
 	//2.定义接口路由
 	academicYearRouter.POST("", grade.AddGrade)
 	academicYearRouter.DELETE("", grade.DeleteGrade)
-	academicYearRouter.GET(":gradeId", nil)
-	academicYearRouter.PUT(":gradeId", nil)
+	academicYearRouter.GET(":id", grade.GetGrade)
+	academicYearRouter.PUT(":id", grade.UpdateGrade)
 	academicYearRouter.GET("", nil)
 
 	//3.返回

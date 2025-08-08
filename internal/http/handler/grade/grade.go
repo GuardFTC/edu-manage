@@ -24,11 +24,8 @@ func AddGrade(c *gin.Context) {
 		return
 	}
 
-	//3.获取路径参数学年ID
-	yearId := c.Param("id")
-
 	//3.保存
-	if err := gradeService.Add(c, yearId, &gradeDto); err != nil {
+	if err := gradeService.Add(c, &gradeDto); err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
 	}
@@ -47,15 +44,53 @@ func DeleteGrade(c *gin.Context) {
 		return
 	}
 
-	//2.获取路径参数学年ID
-	yearId := c.Param("id")
-
-	//3.删除年级
-	if err := gradeService.Delete(c, ids, yearId); err != nil {
+	//2.删除年级
+	if err := gradeService.Delete(c, ids); err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
 	}
 
-	//4.返回
+	//3.返回
 	res.SuccessResToC(c, res.DeleteSuccess, nil)
+}
+
+// GetGrade 获取年级
+func GetGrade(c *gin.Context) {
+
+	//1.获取路径参数学年ID
+	id := c.Param("id")
+
+	//2.查询年级
+	gradeDto, err := gradeService.Get(c, id)
+	if err != nil {
+		res.FailResToCByMsg(c, err.Error())
+	}
+
+	//3.返回
+	res.SuccessResToC(c, res.QuerySuccess, gradeDto)
+}
+
+// UpdateGrade 修改年级
+func UpdateGrade(c *gin.Context) {
+
+	//1.获取路径参数
+	id := c.Param("id")
+
+	//2.创建DTO
+	var gradeDto dtoPack.GradeDto
+
+	//3.校验Body参数并绑定
+	if err := c.ShouldBindJSON(&gradeDto); err != nil {
+		res.FailResToC(c, res.BadRequestFail, err.Error())
+		return
+	}
+
+	//4.更新年级
+	if err := gradeService.Update(c, id, &gradeDto); err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//5.返回
+	res.SuccessResToC(c, res.UpdateSuccess, gradeDto)
 }
