@@ -113,8 +113,7 @@ func (s *AcademicYearService) Update(c *gin.Context, id string, academicYearDto 
 		intId := cast.ToInt64(id)
 
 		//2.查询学年
-		a := db.GetDefaultQuery().AcademicYear
-		academicYear, err := a.WithContext(c).Where(a.ID.Eq(intId)).First()
+		academicYear, err := tx.AcademicYear.WithContext(c).Where(tx.AcademicYear.ID.Eq(intId)).First()
 		if err != nil {
 			return err
 		}

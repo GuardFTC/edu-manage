@@ -3,6 +3,7 @@ package grade
 
 import (
 	dtoPack "net-project-edu_manage/internal/model/dto/grade"
+	reqPack "net-project-edu_manage/internal/model/request/grade"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/service/grade"
 
@@ -57,7 +58,7 @@ func DeleteGrade(c *gin.Context) {
 // GetGrade 获取年级
 func GetGrade(c *gin.Context) {
 
-	//1.获取路径参数学年ID
+	//1.获取路径参数年级ID
 	id := c.Param("id")
 
 	//2.查询年级
@@ -93,4 +94,26 @@ func UpdateGrade(c *gin.Context) {
 
 	//5.返回
 	res.SuccessResToC(c, res.UpdateSuccess, gradeDto)
+}
+
+func PageGrade(c *gin.Context) {
+
+	//1.创建查询参数
+	gradeRequest := reqPack.GradeRequest{}
+
+	//2.校验URL参数并绑定
+	if err := c.ShouldBindQuery(&gradeRequest); err != nil {
+		res.FailResToC(c, res.BadRequestFail, err.Error())
+		return
+	}
+
+	//3.分页查询
+	pageRes, err := gradeService.Page(c, &gradeRequest)
+	if err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//4.返回
+	res.SuccessResToC(c, res.QuerySuccess, pageRes)
 }

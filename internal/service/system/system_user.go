@@ -108,8 +108,7 @@ func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *d
 		intId := cast.ToInt64(id)
 
 		//2.查询系统用户
-		s := db.GetDefaultQuery().SystemUser
-		systemUser, err := s.WithContext(c).Where(s.ID.Eq(intId)).First()
+		systemUser, err := tx.SystemUser.WithContext(c).Where(tx.SystemUser.ID.Eq(intId)).First()
 		if err != nil {
 			return err
 		}

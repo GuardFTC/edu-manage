@@ -19,7 +19,7 @@ func InitGradeRouter(v *gin.RouterGroup, tokenHandler gin.HandlerFunc) *gin.Rout
 	academicYearRouter.DELETE("", grade.DeleteGrade)
 	academicYearRouter.GET(":id", grade.GetGrade)
 	academicYearRouter.PUT(":id", grade.UpdateGrade)
-	academicYearRouter.GET("", nil)
+	academicYearRouter.GET("", grade.PageGrade)
 
 	//3.返回
 	return academicYearRouter
