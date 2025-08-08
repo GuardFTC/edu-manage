@@ -26,5 +26,5 @@ func main() {
 	router.InitRouter()
 
 	//5.启动服务器
-	server.StartServer()
+	server.StartServer(&config.AppConfig.Server)
 }

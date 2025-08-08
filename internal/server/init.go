@@ -4,22 +4,23 @@ package server
 import (
 	"context"
 	"errors"
-	log "github.com/sirupsen/logrus"
-	"net-project-edu_manage/internal/config"
+	"net-project-edu_manage/internal/config/config"
 	"net-project-edu_manage/internal/http/router"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // StartServer 启动并优雅关闭服务器
-func StartServer() {
+func StartServer(serverConfig *config.ServerConfig) {
 
 	//1.创建http.Server实例
 	srv := &http.Server{
-		Addr:    ":" + config.AppConfig.Server.Port,
+		Addr:    ":" + serverConfig.Port,
 		Handler: router.Router,
 	}
 
