@@ -2,8 +2,8 @@
 package grade
 
 import (
-	"net-project-edu_manage/internal/model/dto"
-	"net-project-edu_manage/internal/model/request"
+	dtoPack "net-project-edu_manage/internal/model/dto/grade"
+	reqPack "net-project-edu_manage/internal/model/request/grade"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/service/grade"
 
@@ -17,7 +17,7 @@ var academicYearService = new(grade.AcademicYearService)
 func AddAcademicYear(c *gin.Context) {
 
 	//1.创建DTO
-	var academicYearDTO dto.AcademicYearDto
+	var academicYearDTO dtoPack.AcademicYearDto
 
 	//2.校验参数并绑定
 	if err := c.ShouldBindJSON(&academicYearDTO); err != nil {
@@ -90,7 +90,7 @@ func UpdateAcademicYear(c *gin.Context) {
 	id := c.Param("id")
 
 	//2.创建DTO
-	var academicYearDTO dto.AcademicYearDto
+	var academicYearDTO dtoPack.AcademicYearDto
 
 	//3.校验Body参数并绑定
 	if err := c.ShouldBindJSON(&academicYearDTO); err != nil {
@@ -123,7 +123,7 @@ func UpdateAcademicYear(c *gin.Context) {
 func PageAcademicYear(c *gin.Context) {
 
 	//1.创建查询参数
-	academicYearRequest := request.AcademicYearRequest{}
+	academicYearRequest := reqPack.AcademicYearRequest{}
 
 	//2.校验URL参数并绑定
 	if err := c.ShouldBindQuery(&academicYearRequest); err != nil {

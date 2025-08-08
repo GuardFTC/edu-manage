@@ -7,7 +7,7 @@ import (
 	"net-project-edu_manage/internal/common/util"
 	"net-project-edu_manage/internal/config"
 	"net-project-edu_manage/internal/infrastructure/redis"
-	"net-project-edu_manage/internal/model/dto"
+	dtoPack "net-project-edu_manage/internal/model/dto/auth"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/repository"
 	"sync"
@@ -26,7 +26,7 @@ type AuthService struct {
 }
 
 // Login 登录
-func (a *AuthService) Login(c *gin.Context, loginDto *dto.LoginDto) (*dto.LoginResultDto, error) {
+func (a *AuthService) Login(c *gin.Context, loginDto *dtoPack.LoginDto) (*dtoPack.LoginResultDto, error) {
 
 	//1.根据账号查询用户信息
 	systemUser, err := systemUserRepo.GetByAccount(c, loginDto.Account)
@@ -54,7 +54,7 @@ func (a *AuthService) Login(c *gin.Context, loginDto *dto.LoginDto) (*dto.LoginR
 	}
 
 	//6.封装结构体
-	loginRes := &dto.LoginResultDto{
+	loginRes := &dtoPack.LoginResultDto{
 		Token:        token,
 		RefreshToken: refreshToken,
 	}
@@ -64,7 +64,7 @@ func (a *AuthService) Login(c *gin.Context, loginDto *dto.LoginDto) (*dto.LoginR
 }
 
 // RefreshToken 刷新token
-func (a *AuthService) RefreshToken(c *gin.Context, refreshToken string, claims map[string]any) (*dto.LoginResultDto, error) {
+func (a *AuthService) RefreshToken(c *gin.Context, refreshToken string, claims map[string]any) (*dtoPack.LoginResultDto, error) {
 
 	//1.解析token参数
 	id := cast.ToInt64(claims["id"])
@@ -78,7 +78,7 @@ func (a *AuthService) RefreshToken(c *gin.Context, refreshToken string, claims m
 	}
 
 	//3.封装结构体
-	loginRes := &dto.LoginResultDto{
+	loginRes := &dtoPack.LoginResultDto{
 		Token:        token,
 		RefreshToken: refreshToken,
 	}

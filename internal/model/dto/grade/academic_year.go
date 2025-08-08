@@ -1,5 +1,5 @@
 // Package dto @Author:冯铁城 [17615007230@163.com] 2025-08-04 16:26:37
-package dto
+package grade
 
 import (
 	"fmt"

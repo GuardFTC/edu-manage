@@ -2,8 +2,8 @@
 package system
 
 import (
-	"net-project-edu_manage/internal/model/dto"
-	"net-project-edu_manage/internal/model/request"
+	dtoPack "net-project-edu_manage/internal/model/dto/system"
+	reqPack "net-project-edu_manage/internal/model/request/system"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/service/system"
 
@@ -17,7 +17,7 @@ var systemUserService = new(system.SystemUserService)
 func AddSystemUser(c *gin.Context) {
 
 	//1.创建DTO
-	var systemUserDto *dto.SystemUserDto
+	var systemUserDto *dtoPack.SystemUserDto
 
 	//2.校验参数并绑定
 	if err := c.ShouldBindJSON(&systemUserDto); err != nil {
@@ -79,7 +79,7 @@ func UpdateSystemUser(c *gin.Context) {
 	id := c.Param("id")
 
 	//2.创建DTO
-	var systemUserDto *dto.SystemUserDto
+	var systemUserDto *dtoPack.SystemUserDto
 
 	//3.校验Body参数并绑定
 	if err := c.ShouldBindJSON(&systemUserDto); err != nil {
@@ -101,7 +101,7 @@ func UpdateSystemUser(c *gin.Context) {
 func PageSystemUser(c *gin.Context) {
 
 	//1.创建查询参数
-	systemUserRequest := request.SystemUserRequest{}
+	systemUserRequest := reqPack.SystemUserRequest{}
 
 	//2.校验URL参数并绑定
 	if err := c.ShouldBindQuery(&systemUserRequest); err != nil {

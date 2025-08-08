@@ -6,10 +6,10 @@ import (
 	"net-project-edu_manage/internal/infrastructure/db"
 	"net-project-edu_manage/internal/infrastructure/db/master/model"
 	"net-project-edu_manage/internal/infrastructure/db/master/query"
-	"net-project-edu_manage/internal/model/dto"
-	"net-project-edu_manage/internal/model/request"
+	dtoPack "net-project-edu_manage/internal/model/dto/system"
+	reqPack "net-project-edu_manage/internal/model/request/system"
 	"net-project-edu_manage/internal/model/res"
-	"net-project-edu_manage/internal/model/vo"
+	voPack "net-project-edu_manage/internal/model/vo/system"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ type SystemUserService struct {
 }
 
 // Add 新增系统用户
-func (sys *SystemUserService) Add(c *gin.Context, systemUserDTO *dto.SystemUserDto) error {
+func (sys *SystemUserService) Add(c *gin.Context, systemUserDTO *dtoPack.SystemUserDto) error {
 	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
 
 		//1.密码加密
@@ -75,7 +75,7 @@ func (sys *SystemUserService) Delete(c *gin.Context, ids []string) error {
 }
 
 // Get 获取系统用户
-func (sys *SystemUserService) Get(c *gin.Context, id string) (*dto.SystemUserDto, error) {
+func (sys *SystemUserService) Get(c *gin.Context, id string) (*dtoPack.SystemUserDto, error) {
 
 	//1.id string 转 int64
 	intId := cast.ToInt64(id)
@@ -88,7 +88,7 @@ func (sys *SystemUserService) Get(c *gin.Context, id string) (*dto.SystemUserDto
 	}
 
 	//3.po to dto
-	var systemUserDTO dto.SystemUserDto
+	var systemUserDTO dtoPack.SystemUserDto
 	if err = copier.Copy(&systemUserDTO, &systemUser); err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (sys *SystemUserService) Get(c *gin.Context, id string) (*dto.SystemUserDto
 }
 
 // Update 修改系统用户
-func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *dto.SystemUserDto) error {
+func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *dtoPack.SystemUserDto) error {
 	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
@@ -142,7 +142,7 @@ func (sys *SystemUserService) Update(c *gin.Context, id string, systemUserDTO *d
 }
 
 // Page 分页查询系统用户
-func (sys *SystemUserService) Page(c *gin.Context, request *request.SystemUserRequest) (*res.PageResult[*vo.SystemUserVo], error) {
+func (sys *SystemUserService) Page(c *gin.Context, request *reqPack.SystemUserRequest) (*res.PageResult[*voPack.SystemUserVo], error) {
 
 	//1.分页参数默认处理
 	request.DefaultPage()
@@ -173,7 +173,7 @@ func (sys *SystemUserService) Page(c *gin.Context, request *request.SystemUserRe
 		Offset(request.GetSkip()).Limit(request.PageSize)
 
 	//5.查询数据
-	var systemUsersVos []*vo.SystemUserVo
+	var systemUsersVos []*voPack.SystemUserVo
 	if err := context.Scan(&systemUsersVos); err != nil {
 		return nil, err
 	}
@@ -185,5 +185,5 @@ func (sys *SystemUserService) Page(c *gin.Context, request *request.SystemUserRe
 	}
 
 	//7.封装分页结果
-	return res.CreatePageResult[*vo.SystemUserVo](&request.Request, total, systemUsersVos), nil
+	return res.CreatePageResult[*voPack.SystemUserVo](&request.Request, total, systemUsersVos), nil
 }

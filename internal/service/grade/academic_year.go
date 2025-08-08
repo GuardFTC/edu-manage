@@ -6,10 +6,10 @@ import (
 	"net-project-edu_manage/internal/infrastructure/db/master/model"
 	"net-project-edu_manage/internal/infrastructure/db/master/query"
 	"net-project-edu_manage/internal/model/base"
-	"net-project-edu_manage/internal/model/dto"
-	"net-project-edu_manage/internal/model/request"
+	dtoPack "net-project-edu_manage/internal/model/dto/grade"
+	reqPack "net-project-edu_manage/internal/model/request/grade"
 	"net-project-edu_manage/internal/model/res"
-	"net-project-edu_manage/internal/model/vo"
+	voPack "net-project-edu_manage/internal/model/vo/grade"
 	"sync"
 	"time"
 
@@ -25,7 +25,7 @@ type AcademicYearService struct {
 }
 
 // Add 新增
-func (s *AcademicYearService) Add(c *gin.Context, academicYearDto *dto.AcademicYearDto) error {
+func (s *AcademicYearService) Add(c *gin.Context, academicYearDto *dtoPack.AcademicYearDto) error {
 	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
 
 		//1.设置名称
@@ -71,7 +71,7 @@ func (s *AcademicYearService) Delete(c *gin.Context, ids []string) error {
 }
 
 // Get 获取学年
-func (s *AcademicYearService) Get(c *gin.Context, id string) (*dto.AcademicYearDto, error) {
+func (s *AcademicYearService) Get(c *gin.Context, id string) (*dtoPack.AcademicYearDto, error) {
 
 	//1.id string 转 int64
 	intId := cast.ToInt64(id)
@@ -84,7 +84,7 @@ func (s *AcademicYearService) Get(c *gin.Context, id string) (*dto.AcademicYearD
 	}
 
 	//3.po to dto
-	var academicYearDTO dto.AcademicYearDto
+	var academicYearDTO dtoPack.AcademicYearDto
 	if err = copier.Copy(&academicYearDTO, &academicYear); err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (s *AcademicYearService) Get(c *gin.Context, id string) (*dto.AcademicYearD
 }
 
 // Update 修改学年
-func (s *AcademicYearService) Update(c *gin.Context, id string, academicYearDto *dto.AcademicYearDto) error {
+func (s *AcademicYearService) Update(c *gin.Context, id string, academicYearDto *dtoPack.AcademicYearDto) error {
 	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
 
 		//1.id string 转 int64
@@ -137,7 +137,7 @@ func (s *AcademicYearService) Update(c *gin.Context, id string, academicYearDto 
 }
 
 // Page 分页查询学年
-func (s *AcademicYearService) Page(c *gin.Context, request *request.AcademicYearRequest) (*res.PageResult[*vo.AcademicYearVo], error) {
+func (s *AcademicYearService) Page(c *gin.Context, request *reqPack.AcademicYearRequest) (*res.PageResult[*voPack.AcademicYearVo], error) {
 
 	//1.分页参数默认处理
 	request.DefaultPage()
@@ -181,7 +181,7 @@ func (s *AcademicYearService) Page(c *gin.Context, request *request.AcademicYear
 		Offset(request.GetSkip()).Limit(request.PageSize)
 
 	//6.查询数据
-	var academicYearVos []*vo.AcademicYearVo
+	var academicYearVos []*voPack.AcademicYearVo
 	if err := context.Scan(&academicYearVos); err != nil {
 		return nil, err
 	}
@@ -199,5 +199,5 @@ func (s *AcademicYearService) Page(c *gin.Context, request *request.AcademicYear
 	}
 
 	//9.封装分页结果
-	return res.CreatePageResult[*vo.AcademicYearVo](&request.Request, total, academicYearVos), nil
+	return res.CreatePageResult[*voPack.AcademicYearVo](&request.Request, total, academicYearVos), nil
 }

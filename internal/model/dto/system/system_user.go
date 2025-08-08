@@ -1,5 +1,5 @@
 // Package dto @Author:冯铁城 [17615007230@163.com] 2025-07-30 17:33:59
-package dto
+package system
 
 import "net-project-edu_manage/internal/model/base"
 

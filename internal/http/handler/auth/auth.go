@@ -5,7 +5,7 @@ import (
 	"net-project-edu_manage/internal/common/constant"
 	"net-project-edu_manage/internal/common/util"
 	"net-project-edu_manage/internal/infrastructure/redis"
-	"net-project-edu_manage/internal/model/dto"
+	dtoPack "net-project-edu_manage/internal/model/dto/auth"
 	"net-project-edu_manage/internal/model/res"
 	"net-project-edu_manage/internal/service/auth"
 
@@ -19,7 +19,7 @@ var authService = new(auth.AuthService)
 func Login(c *gin.Context) {
 
 	//1.创建DTO
-	var loginDto *dto.LoginDto
+	var loginDto *dtoPack.LoginDto
 
 	//2.校验参数并绑定
 	if err := c.ShouldBindJSON(&loginDto); err != nil {
