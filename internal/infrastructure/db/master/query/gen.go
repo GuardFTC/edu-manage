@@ -18,6 +18,7 @@ import (
 var (
 	Q            = new(Query)
 	AcademicYear *academicYear
+	Class        *class
 	Grade        *grade
 	GradeYear    *gradeYear
 	SystemUser   *systemUser
@@ -26,6 +27,7 @@ var (
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
 	AcademicYear = &Q.AcademicYear
+	Class = &Q.Class
 	Grade = &Q.Grade
 	GradeYear = &Q.GradeYear
 	SystemUser = &Q.SystemUser
@@ -35,6 +37,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:           db,
 		AcademicYear: newAcademicYear(db, opts...),
+		Class:        newClass(db, opts...),
 		Grade:        newGrade(db, opts...),
 		GradeYear:    newGradeYear(db, opts...),
 		SystemUser:   newSystemUser(db, opts...),
@@ -45,6 +48,7 @@ type Query struct {
 	db *gorm.DB
 
 	AcademicYear academicYear
+	Class        class
 	Grade        grade
 	GradeYear    gradeYear
 	SystemUser   systemUser
@@ -56,6 +60,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:           db,
 		AcademicYear: q.AcademicYear.clone(db),
+		Class:        q.Class.clone(db),
 		Grade:        q.Grade.clone(db),
 		GradeYear:    q.GradeYear.clone(db),
 		SystemUser:   q.SystemUser.clone(db),
@@ -74,6 +79,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:           db,
 		AcademicYear: q.AcademicYear.replaceDB(db),
+		Class:        q.Class.replaceDB(db),
 		Grade:        q.Grade.replaceDB(db),
 		GradeYear:    q.GradeYear.replaceDB(db),
 		SystemUser:   q.SystemUser.replaceDB(db),
@@ -82,6 +88,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 
 type queryCtx struct {
 	AcademicYear IAcademicYearDo
+	Class        IClassDo
 	Grade        IGradeDo
 	GradeYear    IGradeYearDo
 	SystemUser   ISystemUserDo
@@ -90,6 +97,7 @@ type queryCtx struct {
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
 		AcademicYear: q.AcademicYear.WithContext(ctx),
+		Class:        q.Class.WithContext(ctx),
 		Grade:        q.Grade.WithContext(ctx),
 		GradeYear:    q.GradeYear.WithContext(ctx),
 		SystemUser:   q.SystemUser.WithContext(ctx),

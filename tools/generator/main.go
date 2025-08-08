@@ -28,6 +28,7 @@ func main() {
 			"academic_year",
 			"grade",
 			"grade_year",
+			"class",
 		},
 		"internal/infrastructure/db/master/query",
 		"model",
