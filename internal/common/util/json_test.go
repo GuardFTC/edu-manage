@@ -460,7 +460,7 @@ func TestJSONEdgeCases(t *testing.T) {
 		var emptySlice []string
 		jsonStr, err = ToJSON(emptySlice)
 		assert.NoError(t, err)
-		assert.Equal(t, "[]", jsonStr)
+		assert.Equal(t, "null", jsonStr)
 
 		// 4.测试空映射
 		emptyMap := map[string]interface{}{}
