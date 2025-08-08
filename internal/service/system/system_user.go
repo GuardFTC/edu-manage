@@ -1,5 +1,5 @@
 // Package service @Author:冯铁城 [17615007230@163.com] 2025-07-30 19:41:24
-package service
+package system
 
 import (
 	"net-project-edu_manage/internal/common/util"

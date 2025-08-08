@@ -1,17 +1,17 @@
-// Package handler @Author:冯铁城 [17615007230@163.com] 2025-07-30 17:32:15
+// Package system @Author:冯铁城 [17615007230@163.com] 2025-07-30 17:32:15
 package system
 
 import (
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/request"
 	"net-project-edu_manage/internal/model/res"
-	"net-project-edu_manage/internal/service"
+	"net-project-edu_manage/internal/service/system"
 
 	"github.com/gin-gonic/gin"
 )
 
 // systemUserService 系统用户服务
-var systemUserService = new(service.SystemUserService)
+var systemUserService = new(system.SystemUserService)
 
 // AddSystemUser 新增系统用户
 func AddSystemUser(c *gin.Context) {

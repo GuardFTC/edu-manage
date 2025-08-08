@@ -1,4 +1,4 @@
-// Package handler @Author:冯铁城 [17615007230@163.com] 2025-08-01 17:52:00
+// Package auth @Author:冯铁城 [17615007230@163.com] 2025-08-01 17:52:00
 package auth
 
 import (
@@ -7,13 +7,13 @@ import (
 	"net-project-edu_manage/internal/infrastructure/redis"
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/res"
-	"net-project-edu_manage/internal/service"
+	"net-project-edu_manage/internal/service/auth"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 )
 
-var authService = new(service.AuthService)
+var authService = new(auth.AuthService)
 
 // Login 登录
 func Login(c *gin.Context) {

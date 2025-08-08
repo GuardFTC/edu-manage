@@ -1,5 +1,5 @@
 // Package service @Author:冯铁城 [17615007230@163.com] 2025-08-04 16:37:12
-package service
+package grade
 
 import (
 	"net-project-edu_manage/internal/infrastructure/db"

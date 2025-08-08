@@ -1,17 +1,17 @@
-// Package handler @Author:冯铁城 [17615007230@163.com] 2025-08-04 16:37:12
+// Package grade @Author:冯铁城 [17615007230@163.com] 2025-08-04 16:37:12
 package grade
 
 import (
 	"net-project-edu_manage/internal/model/dto"
 	"net-project-edu_manage/internal/model/request"
 	"net-project-edu_manage/internal/model/res"
-	"net-project-edu_manage/internal/service"
+	"net-project-edu_manage/internal/service/grade"
 
 	"github.com/gin-gonic/gin"
 )
 
 // AcademicYearService 学年服务
-var academicYearService = new(service.AcademicYearService)
+var academicYearService = new(grade.AcademicYearService)
 
 // AddAcademicYear 添加学年
 func AddAcademicYear(c *gin.Context) {
