@@ -17,25 +17,25 @@ import (
 
 var (
 	Q          = new(Query)
-	AfCampaign *afCampaign
+	SystemUser *systemUser
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
-	AfCampaign = &Q.AfCampaign
+	SystemUser = &Q.SystemUser
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:         db,
-		AfCampaign: newAfCampaign(db, opts...),
+		SystemUser: newSystemUser(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	AfCampaign afCampaign
+	SystemUser systemUser
 }
 
 func (q *Query) Available() bool { return q.db != nil }
@@ -43,7 +43,7 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:         db,
-		AfCampaign: q.AfCampaign.clone(db),
+		SystemUser: q.SystemUser.clone(db),
 	}
 }
 
@@ -58,17 +58,17 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:         db,
-		AfCampaign: q.AfCampaign.replaceDB(db),
+		SystemUser: q.SystemUser.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	AfCampaign IAfCampaignDo
+	SystemUser ISystemUserDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		AfCampaign: q.AfCampaign.WithContext(ctx),
+		SystemUser: q.SystemUser.WithContext(ctx),
 	}
 }
 
