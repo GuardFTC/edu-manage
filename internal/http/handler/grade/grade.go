@@ -36,3 +36,26 @@ func AddGrade(c *gin.Context) {
 	//4.返回
 	res.SuccessResToC(c, res.CreateSuccess, gradeDto)
 }
+
+// DeleteGrade 删除年级
+func DeleteGrade(c *gin.Context) {
+
+	//1.获取参数
+	ids := c.QueryArray("id")
+	if len(ids) == 0 {
+		res.FailResToC(c, res.BadRequestFail, "参数为空")
+		return
+	}
+
+	//2.获取路径参数学年ID
+	yearId := c.Param("id")
+
+	//3.删除年级
+	if err := gradeService.Delete(c, ids, yearId); err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//4.返回
+	res.SuccessResToC(c, res.DeleteSuccess, nil)
+}

@@ -16,7 +16,7 @@ func InitGradeRouter(v *gin.RouterGroup, tokenHandler gin.HandlerFunc) *gin.Rout
 
 	//2.定义接口路由
 	academicYearRouter.POST("", grade.AddGrade)
-	academicYearRouter.DELETE("", nil)
+	academicYearRouter.DELETE("", grade.DeleteGrade)
 	academicYearRouter.GET(":gradeId", nil)
 	academicYearRouter.PUT(":gradeId", nil)
 	academicYearRouter.GET("", nil)

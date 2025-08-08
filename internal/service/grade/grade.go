@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 )
 
@@ -57,6 +58,36 @@ func (s *GradeService) Add(c *gin.Context, yearId string, gradeDto *dtoPack.Grad
 		gradeDto.ID = grade.ID
 
 		//9.默认返回
+		return nil
+	})
+}
+
+// Delete 删除年级
+func (s *GradeService) Delete(c *gin.Context, ids []string, yearId string) error {
+	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
+
+		//1.id string 转 int64
+		intIds := cast.ToInt64Slice(ids)
+		intYearId := cast.ToInt64(yearId)
+
+		//2.删除年级
+		if delRes, err := tx.Grade.WithContext(c).Where(tx.Grade.ID.In(intIds...)).Delete(); err != nil {
+			return err
+		} else {
+			log.Printf("删除年级成功,删除数量:%d", delRes.RowsAffected)
+		}
+
+		//3.删除年级-学年关联
+		if delRes, err := tx.GradeYear.WithContext(c).Where(
+			tx.GradeYear.GradeID.In(intIds...),
+			tx.GradeYear.AcademicYearID.Eq(intYearId),
+		).Delete(); err != nil {
+			return err
+		} else {
+			log.Printf("删除年级-学年关联成功,删除数量:%d", delRes.RowsAffected)
+		}
+
+		//4.默认返回
 		return nil
 	})
 }
