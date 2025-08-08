@@ -158,3 +158,51 @@ func GetYearGrade(c *gin.Context) {
 	//3.返回
 	res.SuccessResToC(c, res.QuerySuccess, gradeVos)
 }
+
+// AddYearGrade 添加学年-年级关联
+func AddYearGrade(c *gin.Context) {
+
+	//1.获取路径参数
+	id := c.Param("id")
+
+	//2.创建DTO
+	var dto dtoPack.YearGradeDto
+
+	//3.校验Body参数并绑定
+	if err := c.ShouldBindJSON(&dto); err != nil {
+		res.FailResToC(c, res.BadRequestFail, err.Error())
+		return
+	}
+
+	//4.添加关联
+	if err := academicYearService.AddGrades(c, id, &dto); err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//5.返回
+	res.SuccessResToC(c, res.CreateSuccess, nil)
+}
+
+// DeleteYearGrade 删除学年-年级关联
+func DeleteYearGrade(c *gin.Context) {
+
+	//1.获取路径参数
+	id := c.Param("id")
+
+	//2.获取查询参数
+	gradeIds := c.QueryArray("grade_ids")
+	if len(gradeIds) == 0 {
+		res.FailResToC(c, res.BadRequestFail, "参数为空")
+		return
+	}
+
+	//3.删除关联
+	if err := academicYearService.DeleteGrades(c, id, gradeIds); err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//4.返回
+	res.SuccessResToC(c, res.DeleteSuccess, nil)
+}

@@ -240,3 +240,56 @@ func (s *AcademicYearService) Grades(c *gin.Context, id string) ([]*voPack.Simpl
 	//5.返回
 	return gradeVos, nil
 }
+
+// AddGrades 添加学年-年级关联
+func (s *AcademicYearService) AddGrades(c *gin.Context, academicYearId string, dto *dtoPack.YearGradeDto) error {
+	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
+
+		//1.id string 转 int64
+		intAcademicYearId := cast.ToInt64(academicYearId)
+
+		//2.删除旧的关联关系
+		if _, err := tx.GradeYear.WithContext(c).Where(tx.GradeYear.AcademicYearID.Eq(intAcademicYearId)).Delete(); err != nil {
+			return err
+		}
+
+		//3.创建新的关联关系
+		gradeYears := make([]*model.GradeYear, len(dto.GradeIDs))
+		for i, gradeId := range dto.GradeIDs {
+			gradeYears[i] = &model.GradeYear{
+				AcademicYearID: intAcademicYearId,
+				GradeID:        gradeId,
+			}
+		}
+
+		//4.批量插入
+		if err := tx.GradeYear.WithContext(c).Create(gradeYears...); err != nil {
+			return err
+		}
+
+		//5.返回
+		return nil
+	})
+}
+
+// DeleteGrades 删除学年-年级关联
+func (s *AcademicYearService) DeleteGrades(c *gin.Context, academicYearId string, gradeIds []string) error {
+	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
+
+		//1.id string 转 int64
+		intAcademicYearId := cast.ToInt64(academicYearId)
+		intGradeIds := cast.ToInt64Slice(gradeIds)
+
+		//2.删除关联
+		if delRes, err := tx.GradeYear.WithContext(c).
+			Where(tx.GradeYear.AcademicYearID.Eq(intAcademicYearId), tx.GradeYear.GradeID.In(intGradeIds...)).
+			Delete(); err != nil {
+			return err
+		} else {
+			log.Printf("删除年级-学年关联成功,删除数量:%d", delRes.RowsAffected)
+		}
+
+		//3.返回
+		return nil
+	})
+}
