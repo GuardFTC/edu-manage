@@ -181,7 +181,7 @@ func AddYearGrade(c *gin.Context) {
 	}
 
 	//5.返回
-	res.SuccessResToC(c, res.CreateSuccess, nil)
+	res.SuccessResToC(c, res.CreateSuccess, dto)
 }
 
 // DeleteYearGrade 删除学年-年级关联
@@ -191,7 +191,7 @@ func DeleteYearGrade(c *gin.Context) {
 	id := c.Param("id")
 
 	//2.获取查询参数
-	gradeIds := c.QueryArray("grade_ids")
+	gradeIds := c.QueryArray("gradeId")
 	if len(gradeIds) == 0 {
 		res.FailResToC(c, res.BadRequestFail, "参数为空")
 		return

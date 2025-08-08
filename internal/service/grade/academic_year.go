@@ -248,26 +248,55 @@ func (s *AcademicYearService) AddGrades(c *gin.Context, academicYearId string, d
 		//1.id string 转 int64
 		intAcademicYearId := cast.ToInt64(academicYearId)
 
-		//2.删除旧的关联关系
+		//2.确认学年存在
+		if _, err := tx.AcademicYear.WithContext(c).Where(tx.AcademicYear.ID.Eq(intAcademicYearId)).First(); err != nil {
+			return err
+		}
+
+		//3.筛选出真实存在的年级ID
+		var existingGradeIds []int64
+		if err := tx.Grade.WithContext(c).Where(tx.Grade.ID.In(dto.GradeIDs...)).Pluck(tx.Grade.ID, &existingGradeIds); err != nil {
+			return err
+		}
+
+		//4.空值处理
+		if existingGradeIds == nil {
+			existingGradeIds = []int64{}
+		}
+
+		//5.重置年级ID集合
+		dto.GradeIDs = existingGradeIds
+
+		//6.如果没有任何一个年级存在，直接返回
+		if len(existingGradeIds) == 0 {
+			return nil
+		}
+
+		//7.设置创建人以及修改人
+		dto.SetCreateByAndUpdateBy(c)
+
+		//8.删除旧的关联关系
 		if _, err := tx.GradeYear.WithContext(c).Where(tx.GradeYear.AcademicYearID.Eq(intAcademicYearId)).Delete(); err != nil {
 			return err
 		}
 
-		//3.创建新的关联关系
-		gradeYears := make([]*model.GradeYear, len(dto.GradeIDs))
-		for i, gradeId := range dto.GradeIDs {
+		//9.创建新的关联关系
+		gradeYears := make([]*model.GradeYear, len(existingGradeIds))
+		for i, gradeId := range existingGradeIds {
 			gradeYears[i] = &model.GradeYear{
 				AcademicYearID: intAcademicYearId,
 				GradeID:        gradeId,
+				CreatedBy:      dto.CreatedBy,
+				UpdatedBy:      dto.UpdatedBy,
 			}
 		}
 
-		//4.批量插入
+		//10.批量插入
 		if err := tx.GradeYear.WithContext(c).Create(gradeYears...); err != nil {
 			return err
 		}
 
-		//5.返回
+		//11.返回
 		return nil
 	})
 }
