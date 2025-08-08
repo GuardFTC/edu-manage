@@ -322,3 +322,32 @@ func (s *AcademicYearService) DeleteGrades(c *gin.Context, academicYearId string
 		return nil
 	})
 }
+
+// List 列表查询学年
+func (s *AcademicYearService) List(c *gin.Context, request *reqPack.AcademicYearRequest) ([]*voPack.SimpleAcademicYearVo, error) {
+
+	//1.封装查询参数
+	a := db.GetDefaultQuery().AcademicYear
+	context := a.WithContext(c)
+	if request.Name != "" {
+		context = context.Where(a.Name.Like("%" + request.Name + "%"))
+	}
+
+	//2.查询
+	academicYears, err := context.Select(a.ID, a.Name).Order(a.ID.Desc()).Find()
+	if err != nil {
+		return nil, err
+	}
+
+	//3.po to vo
+	var academicYearVos []*voPack.SimpleAcademicYearVo
+	for _, academicYear := range academicYears {
+		academicYearVos = append(academicYearVos, &voPack.SimpleAcademicYearVo{
+			SimpleVo: base.SimpleVo{ID: academicYear.ID},
+			Name:     academicYear.Name,
+		})
+	}
+
+	//4.返回
+	return academicYearVos, nil
+}

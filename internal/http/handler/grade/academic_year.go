@@ -123,23 +123,31 @@ func UpdateAcademicYear(c *gin.Context) {
 func PageAcademicYear(c *gin.Context) {
 
 	//1.创建查询参数
-	academicYearRequest := reqPack.AcademicYearRequest{}
+	request := reqPack.AcademicYearRequest{}
 
 	//2.校验URL参数并绑定
-	if err := c.ShouldBindQuery(&academicYearRequest); err != nil {
+	if err := c.ShouldBindQuery(&request); err != nil {
 		res.FailResToC(c, res.BadRequestFail, err.Error())
 		return
 	}
 
-	//3.分页查询
-	pageRes, err := academicYearService.Page(c, &academicYearRequest)
+	//3.如果判定是执行列表查询，还是分页查询
+	var resData any
+	var err error
+	if request.IsList {
+		resData, err = academicYearService.List(c, &request)
+	} else {
+		resData, err = academicYearService.Page(c, &request)
+	}
+
+	//4.异常不为空，则返回异常信息
 	if err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
 	}
 
-	//4.返回
-	res.SuccessResToC(c, res.QuerySuccess, pageRes)
+	//5.返回
+	res.SuccessResToC(c, res.QuerySuccess, resData)
 }
 
 // GetYearGrade 获取学年对应的年级

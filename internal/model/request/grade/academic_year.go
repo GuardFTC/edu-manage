@@ -12,5 +12,6 @@ type AcademicYearRequest struct {
 	StartDateEnd   string `json:"startDateEnd" form:"startDateEnd" binding:"omitempty,datetime=2006-01-02" `
 	EndDateBegin   string `json:"endDateBegin" form:"endDateBegin" binding:"omitempty,datetime=2006-01-02"`
 	EndDateEnd     string `json:"endDateEnd" form:"endDateEnd" binding:"omitempty,datetime=2006-01-02"`
+	IsList         bool   `json:"isList" form:"isList" binding:"omitempty"`
 	base.Request
 }
