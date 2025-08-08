@@ -6,6 +6,7 @@ import (
 	"net-project-edu_manage/internal/infrastructure/db"
 	"net-project-edu_manage/internal/infrastructure/db/master/model"
 	"net-project-edu_manage/internal/infrastructure/db/master/query"
+	"net-project-edu_manage/internal/model/base"
 	dtoPack "net-project-edu_manage/internal/model/dto/grade"
 	reqPack "net-project-edu_manage/internal/model/request/grade"
 	"net-project-edu_manage/internal/model/res"
@@ -178,4 +179,33 @@ func (s *GradeService) Page(c *gin.Context, request *reqPack.GradeRequest) (*res
 
 	//8.封装分页结果
 	return res.CreatePageResult[*voPack.GradeVo](&request.Request, total, gradeVos), nil
+}
+
+// List 列表查询年级
+func (s *GradeService) List(c *gin.Context, request *reqPack.GradeRequest) ([]*voPack.SimpleGradeVo, error) {
+
+	//1.封装查询参数
+	g := db.GetDefaultQuery().Grade
+	context := g.WithContext(c)
+	if request.Name != "" {
+		context = context.Where(g.Name.Like("%" + request.Name + "%"))
+	}
+
+	//2.查询
+	grades, err := context.Select(g.ID, g.Name).Order(g.ID.Desc()).Find()
+	if err != nil {
+		return nil, err
+	}
+
+	//3.po to vo
+	var gradeVos []*voPack.SimpleGradeVo
+	for _, grade := range grades {
+		gradeVos = append(gradeVos, &voPack.SimpleGradeVo{
+			SimpleVo: base.SimpleVo{ID: grade.ID},
+			Name:     grade.Name,
+		})
+	}
+
+	//4.返回
+	return gradeVos, nil
 }

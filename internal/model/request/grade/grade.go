@@ -7,6 +7,7 @@ import (
 
 // GradeRequest 年级请求参数
 type GradeRequest struct {
-	Name string `json:"name" form:"name" binding:"omitempty"`
+	Name   string `json:"name" form:"name" binding:"omitempty"`
+	IsList bool   `json:"isList" form:"isList" binding:"omitempty"`
 	base.Request
 }

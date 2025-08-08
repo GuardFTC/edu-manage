@@ -107,13 +107,21 @@ func PageGrade(c *gin.Context) {
 		return
 	}
 
-	//3.分页查询
-	pageRes, err := gradeService.Page(c, &gradeRequest)
+	//3.如果判定是执行列表查询，还是分页查询
+	var resData any
+	var err error
+	if gradeRequest.IsList {
+		resData, err = gradeService.List(c, &gradeRequest)
+	} else {
+		resData, err = gradeService.Page(c, &gradeRequest)
+	}
+
+	//4.异常不为空，则返回异常信息
 	if err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
 	}
 
-	//4.返回
-	res.SuccessResToC(c, res.QuerySuccess, pageRes)
+	//5.返回
+	res.SuccessResToC(c, res.QuerySuccess, resData)
 }
