@@ -34,3 +34,23 @@ func AddClass(c *gin.Context) {
 	res.SuccessResToC(c, res.CreateSuccess, classDto)
 
 }
+
+// DeleteClass 删除班级
+func DeleteClass(c *gin.Context) {
+
+	//1.获取参数
+	ids := c.QueryArray("id")
+	if len(ids) == 0 {
+		res.FailResToC(c, res.BadRequestFail, "参数为空")
+		return
+	}
+
+	//2.删除班级
+	if err := classService.Delete(c, ids); err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//3.返回
+	res.SuccessResToC(c, res.DeleteSuccess, nil)
+}

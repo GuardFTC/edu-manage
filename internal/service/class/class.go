@@ -10,6 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 )
 
 // ClassService 班级服务
@@ -51,6 +53,29 @@ func (s *ClassService) Add(c *gin.Context, classDto *dtoPack.ClassDto) error {
 		classDto.ID = class.ID
 
 		//7.默认返回
+		return nil
+	})
+}
+
+// Delete 删除班级
+func (s *ClassService) Delete(c *gin.Context, ids []string) error {
+	return db.GetDefaultQuery().Transaction(func(tx *query.Query) error {
+
+		//1.id string 转 int64
+		intIds := cast.ToInt64Slice(ids)
+
+		//2.TODO 查询是否有关联的学生，如果有无法删除
+
+		//3.TODO 查询是否有关联的课程，如果有无法删除
+
+		//4.删除班级
+		if delRes, err := tx.Class.WithContext(c).Where(tx.Class.ID.In(intIds...)).Delete(); err != nil {
+			return err
+		} else {
+			log.Printf("删除班级成功,删除数量:%d", delRes.RowsAffected)
+		}
+
+		//5.默认返回
 		return nil
 	})
 }
