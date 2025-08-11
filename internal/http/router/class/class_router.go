@@ -17,7 +17,7 @@ func InitClassRouter(v *gin.RouterGroup, tokenHandler gin.HandlerFunc) *gin.Rout
 	//2.定义接口路由
 	classRouter.POST("", class.AddClass)
 	classRouter.DELETE("", class.DeleteClass)
-	classRouter.GET(":id", nil)
+	classRouter.GET(":id", class.GetClass)
 	classRouter.PUT(":id", nil)
 	classRouter.GET("", nil)
 
