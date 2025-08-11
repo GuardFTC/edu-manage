@@ -2,6 +2,7 @@
 package grade
 
 import (
+	"errors"
 	"net-project-edu_manage/internal/infrastructure/db"
 	"net-project-edu_manage/internal/infrastructure/db/master/model"
 	"net-project-edu_manage/internal/infrastructure/db/master/query"
@@ -10,6 +11,7 @@ import (
 	reqPack "net-project-edu_manage/internal/model/request/grade"
 	"net-project-edu_manage/internal/model/res"
 	voPack "net-project-edu_manage/internal/model/vo/grade"
+	"net-project-edu_manage/internal/repository"
 	"sync"
 	"time"
 
@@ -18,6 +20,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 )
+
+// GradeYearRepository 年级-学年关联DB操作
+var gradeYearRepository = repository.NewGradeYearRepository()
 
 // AcademicYearService 学年服务
 type AcademicYearService struct {
@@ -60,14 +65,23 @@ func (s *AcademicYearService) Delete(c *gin.Context, ids []string) error {
 		//1.id string 转 int64
 		intIds := cast.ToInt64Slice(ids)
 
-		//2.删除学年
+		//2.查询学年关联的班级
+		count, err := gradeYearRepository.SelectClassCountByYearId(c, intIds)
+		if err != nil {
+			return err
+		}
+		if count > 0 {
+			return errors.New("academic year is associated with classes! can't delete " + res.UnProcessTag)
+		}
+
+		//3.删除学年
 		if delRes, err := tx.AcademicYear.WithContext(c).Where(tx.AcademicYear.ID.In(intIds...)).Delete(); err != nil {
 			return err
 		} else {
 			log.Printf("删除学年成功,删除数量:%d", delRes.RowsAffected)
 		}
 
-		//3.删除年级-学年关联
+		//4.删除年级-学年关联
 		if delRes, err := tx.GradeYear.WithContext(c).Where(
 			tx.GradeYear.AcademicYearID.In(intIds...),
 		).Delete(); err != nil {

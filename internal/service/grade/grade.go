@@ -57,7 +57,7 @@ func (s *GradeService) Delete(c *gin.Context, ids []string) error {
 		//1.id string 转 int64
 		intIds := cast.ToInt64Slice(ids)
 
-		//2.查询年级存在关联的年级
+		//2.查询年级关联的学年
 		count, err := tx.GradeYear.WithContext(c).Where(tx.GradeYear.GradeID.In(intIds...)).Count()
 		if err != nil {
 			return err
