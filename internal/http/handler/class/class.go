@@ -1,0 +1,36 @@
+// Package class @Author:冯铁城 [17615007230@163.com] 2025-08-11 16:29:00
+package class
+
+import (
+	dtoPack "net-project-edu_manage/internal/model/dto/class"
+	"net-project-edu_manage/internal/model/res"
+	"net-project-edu_manage/internal/service/class"
+
+	"github.com/gin-gonic/gin"
+)
+
+// classService 班级服务
+var classService = new(class.ClassService)
+
+// AddClass 添加班级
+func AddClass(c *gin.Context) {
+
+	//1.创建DTO
+	var classDto dtoPack.ClassDto
+
+	//2.校验参数并绑定
+	if err := c.ShouldBindJSON(&classDto); err != nil {
+		res.FailResToC(c, res.BadRequestFail, err.Error())
+		return
+	}
+
+	//3.保存
+	if err := classService.Add(c, &classDto); err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//4.返回
+	res.SuccessResToC(c, res.CreateSuccess, classDto)
+
+}

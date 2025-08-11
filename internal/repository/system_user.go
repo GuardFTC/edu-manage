@@ -10,7 +10,7 @@ import (
 
 // SystemUserRepository 系统用户接口
 type SystemUserRepository interface {
-	GetByAccount(account string) (*model.SystemUser, error)
+	GetByAccount(c *gin.Context, account string) (*model.SystemUser, error)
 }
 
 // SystemUserRepo 系统用户接口实现

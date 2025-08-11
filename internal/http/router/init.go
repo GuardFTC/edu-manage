@@ -4,6 +4,7 @@ package router
 import (
 	"net-project-edu_manage/internal/http/interceptor"
 	"net-project-edu_manage/internal/http/router/auth"
+	"net-project-edu_manage/internal/http/router/class"
 	"net-project-edu_manage/internal/http/router/grade"
 	"net-project-edu_manage/internal/http/router/system"
 	"net-project-edu_manage/internal/http/validate"
@@ -60,4 +61,7 @@ func initModelRouter() {
 
 	//6.定义v1-年级管理-年级路由组
 	grade.InitGradeRouter(v1, tokenHandler)
+
+	//7.定义v1-班级管理-班级路由组
+	class.InitClassRouter(v1, tokenHandler)
 }
