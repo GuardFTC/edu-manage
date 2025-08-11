@@ -55,18 +55,19 @@ func DeleteClass(c *gin.Context) {
 	res.SuccessResToC(c, res.DeleteSuccess, nil)
 }
 
-//// GetClass 获取班级
-//func GetClass(c *gin.Context) {
-//
-//	//1.获取路径参数班级ID
-//	id := c.Param("id")
-//
-//	//2.查询班级
-//	classDto, err := classService.Get(c, id)
-//	if err != nil {
-//		res.FailResToCByMsg(c, err.Error())
-//	}
-//
-//	//3.返回
-//	res.SuccessResToC(c, res.QuerySuccess, classDto)
-//}
+// GetClass 获取班级
+func GetClass(c *gin.Context) {
+
+	//1.获取路径参数班级ID
+	id := c.Param("id")
+
+	//2.查询班级
+	classDto, err := classService.Get(c, id)
+	if err != nil {
+		res.FailResToCByMsg(c, err.Error())
+		return
+	}
+
+	//3.返回
+	res.SuccessResToC(c, res.QuerySuccess, classDto)
+}

@@ -2,10 +2,12 @@
 package class
 
 import (
+	"errors"
 	"net-project-edu_manage/internal/infrastructure/db"
 	"net-project-edu_manage/internal/infrastructure/db/master/model"
 	"net-project-edu_manage/internal/infrastructure/db/master/query"
 	dtoPack "net-project-edu_manage/internal/model/dto/class"
+	"net-project-edu_manage/internal/model/res"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -78,4 +80,34 @@ func (s *ClassService) Delete(c *gin.Context, ids []string) error {
 		//5.默认返回
 		return nil
 	})
+}
+
+// Get 获取班级
+func (s *ClassService) Get(c *gin.Context, id string) (*dtoPack.ClassDto, error) {
+
+	//1.id string 转 int64
+	intId := cast.ToInt64(id)
+
+	//2.设置别名
+	dq := db.GetDefaultQuery()
+	cl := dq.Class.As("c")
+	gy := dq.GradeYear.As("gy")
+
+	//3.查询
+	var classDto dtoPack.ClassDto
+	if err := cl.WithContext(c).
+		Select(cl.ID, cl.Name, gy.AcademicYearID, gy.GradeID).
+		Join(gy, gy.ID.EqCol(cl.GradeYearID)).
+		Where(cl.ID.Eq(intId)).
+		Scan(&classDto); err != nil {
+		return nil, err
+	}
+
+	//4.为空返回异常
+	if classDto.ID == 0 {
+		return nil, errors.New("record " + res.NotFoundTag)
+	}
+
+	//5.返回dto
+	return &classDto, nil
 }
