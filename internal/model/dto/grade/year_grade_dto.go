@@ -5,6 +5,7 @@ import "net-project-edu_manage/internal/model/base"
 
 // YearGradeDto 学年-年级关联DTO
 type YearGradeDto struct {
-	GradeIDs []int64 `json:"gradeIds" binding:"required,gt=0"`
-	base.Dto `json:"-"`
+	GradeId        int64 `json:"gradeId" binding:"omitempty,gt=0"`
+	AcademicYearId int64 `json:"academicYearId" binding:"omitempty,gt=0"`
+	base.Dto       `json:"-"`
 }

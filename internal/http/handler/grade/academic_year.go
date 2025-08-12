@@ -8,10 +8,14 @@ import (
 	"net-project-edu_manage/internal/service/grade"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 )
 
-// AcademicYearService 学年服务
+// academicYearService 学年服务
 var academicYearService = new(grade.AcademicYearService)
+
+// gradeYearService 年级-学年关联服务
+var gradeYearService = new(grade.GradeYearService)
 
 // AddAcademicYear 添加学年
 func AddAcademicYear(c *gin.Context) {
@@ -157,7 +161,7 @@ func GetYearGrade(c *gin.Context) {
 	id := c.Param("id")
 
 	//2.分页查询
-	gradeVos, err := academicYearService.Grades(c, id)
+	gradeVos, err := gradeYearService.GetGradesByYearId(c, id)
 	if err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
@@ -182,13 +186,19 @@ func AddYearGrade(c *gin.Context) {
 		return
 	}
 
-	//4.添加关联
-	if err := academicYearService.AddGrades(c, id, &dto); err != nil {
+	//4.为0返回
+	if dto.GradeId == 0 {
+		res.FailResToC(c, res.BadRequestFail, "请选择年级")
+		return
+	}
+
+	//5.添加关联
+	if err := gradeYearService.AddGradeYear(c, cast.ToInt64(id), dto.GradeId); err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
 	}
 
-	//5.返回
+	//6.返回
 	res.SuccessResToC(c, res.CreateSuccess, dto)
 }
 
@@ -199,14 +209,14 @@ func DeleteYearGrade(c *gin.Context) {
 	id := c.Param("id")
 
 	//2.获取查询参数
-	gradeIds := c.QueryArray("gradeId")
-	if len(gradeIds) == 0 {
+	gradeId := c.Query("gradeId")
+	if gradeId == "" {
 		res.FailResToC(c, res.BadRequestFail, "参数为空")
 		return
 	}
 
 	//3.删除关联
-	if err := academicYearService.DeleteGrades(c, id, gradeIds); err != nil {
+	if err := gradeYearService.DeleteGradeYear(c, cast.ToInt64(id), cast.ToInt64(gradeId)); err != nil {
 		res.FailResToCByMsg(c, err.Error())
 		return
 	}

@@ -12,9 +12,3 @@ type AcademicYearVo struct {
 	EndDate   base.FormatTime `json:"endDate" gorm:"column:end_date"`
 	base.Vo
 }
-
-// SimpleAcademicYearVo 简单学年VO
-type SimpleAcademicYearVo struct {
-	Name string `json:"name" gorm:"column:name"`
-	base.SimpleVo
-}

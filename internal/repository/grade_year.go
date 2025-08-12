@@ -21,6 +21,21 @@ func NewGradeYearRepository() *GradeYearRepo {
 	return &GradeYearRepo{}
 }
 
+// SelectClassCountByGradeYearId 根据学年ID、年级ID查询班级数量
+func (r *GradeYearRepo) SelectClassCountByGradeYearId(c *gin.Context, yearId int64, gradeId int64) (int64, error) {
+
+	//1.设置别名
+	query := db.GetDefaultQuery()
+	gy := query.GradeYear.As("gy")
+	cl := query.Class.As("c")
+
+	//2.查询
+	return gy.WithContext(c).Join(cl, gy.ID.EqCol(cl.GradeYearID)).Where(
+		gy.AcademicYearID.Eq(yearId),
+		gy.GradeID.Eq(gradeId),
+	).Count()
+}
+
 // SelectClassCountByYearId 根据学年ID查询班级数量
 func (r *GradeYearRepo) SelectClassCountByYearId(c *gin.Context, yearIds []int64) (int64, error) {
 

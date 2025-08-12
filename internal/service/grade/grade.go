@@ -57,7 +57,7 @@ func (s *GradeService) Delete(c *gin.Context, ids []string) error {
 		//1.id string 转 int64
 		intIds := cast.ToInt64Slice(ids)
 
-		//2.查询年级关联的学年
+		//2.查询关联的学年
 		count, err := tx.GradeYear.WithContext(c).Where(tx.GradeYear.GradeID.In(intIds...)).Count()
 		if err != nil {
 			return err
@@ -182,7 +182,7 @@ func (s *GradeService) Page(c *gin.Context, request *reqPack.GradeRequest) (*res
 }
 
 // List 列表查询年级
-func (s *GradeService) List(c *gin.Context, request *reqPack.GradeRequest) ([]*voPack.SimpleGradeVo, error) {
+func (s *GradeService) List(c *gin.Context, request *reqPack.GradeRequest) ([]*base.SimpleVo, error) {
 
 	//1.封装查询参数
 	g := db.GetDefaultQuery().Grade
@@ -198,11 +198,11 @@ func (s *GradeService) List(c *gin.Context, request *reqPack.GradeRequest) ([]*v
 	}
 
 	//3.po to vo
-	var gradeVos []*voPack.SimpleGradeVo
+	var gradeVos []*base.SimpleVo
 	for _, grade := range grades {
-		gradeVos = append(gradeVos, &voPack.SimpleGradeVo{
-			SimpleVo: base.SimpleVo{ID: grade.ID},
-			Name:     grade.Name,
+		gradeVos = append(gradeVos, &base.SimpleVo{
+			ID:   grade.ID,
+			Name: grade.Name,
 		})
 	}
 

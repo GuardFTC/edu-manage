@@ -10,9 +10,3 @@ type GradeVo struct {
 	Name string `json:"name" gorm:"column:name"`
 	base.Vo
 }
-
-// SimpleGradeVo 简单年级VO
-type SimpleGradeVo struct {
-	Name string `json:"name" gorm:"column:name"`
-	base.SimpleVo
-}

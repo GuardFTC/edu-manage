@@ -12,5 +12,6 @@ type Vo struct {
 
 // SimpleVo 简单VO
 type SimpleVo struct {
-	ID int64 `json:"id" gorm:"column:id"`
+	ID   int64  `json:"id" gorm:"column:id"`
+	Name string `json:"name" gorm:"column:name"`
 }
