@@ -8,14 +8,10 @@ import (
 	"net-project-edu_manage/internal/service/grade"
 
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
 )
 
 // academicYearService 学年服务
 var academicYearService = new(grade.AcademicYearService)
-
-// gradeYearService 年级-学年关联服务
-var gradeYearService = new(grade.GradeYearService)
 
 // AddAcademicYear 添加学年
 func AddAcademicYear(c *gin.Context) {
@@ -152,75 +148,4 @@ func PageAcademicYear(c *gin.Context) {
 
 	//5.返回
 	res.SuccessResToC(c, res.QuerySuccess, resData)
-}
-
-// GetYearGrade 获取学年对应的年级
-func GetYearGrade(c *gin.Context) {
-
-	//1.获取路径参数
-	id := c.Param("id")
-
-	//2.分页查询
-	gradeVos, err := gradeYearService.GetGradesByYearId(c, id)
-	if err != nil {
-		res.FailResToCByMsg(c, err.Error())
-		return
-	}
-
-	//3.返回
-	res.SuccessResToC(c, res.QuerySuccess, gradeVos)
-}
-
-// AddYearGrade 添加学年-年级关联
-func AddYearGrade(c *gin.Context) {
-
-	//1.获取路径参数
-	id := c.Param("id")
-
-	//2.创建DTO
-	var dto dtoPack.YearGradeDto
-
-	//3.校验Body参数并绑定
-	if err := c.ShouldBindJSON(&dto); err != nil {
-		res.FailResToC(c, res.BadRequestFail, err.Error())
-		return
-	}
-
-	//4.为0返回
-	if dto.GradeId == 0 {
-		res.FailResToC(c, res.BadRequestFail, "请选择年级")
-		return
-	}
-
-	//5.添加关联
-	if err := gradeYearService.AddGradeYear(c, cast.ToInt64(id), dto.GradeId); err != nil {
-		res.FailResToCByMsg(c, err.Error())
-		return
-	}
-
-	//6.返回
-	res.SuccessResToC(c, res.CreateSuccess, dto)
-}
-
-// DeleteYearGrade 删除学年-年级关联
-func DeleteYearGrade(c *gin.Context) {
-
-	//1.获取路径参数
-	id := c.Param("id")
-
-	//2.获取查询参数
-	gradeId := c.Query("gradeId")
-	if gradeId == "" {
-		res.FailResToC(c, res.BadRequestFail, "参数为空")
-		return
-	}
-
-	//3.删除关联
-	if err := gradeYearService.DeleteGradeYear(c, cast.ToInt64(id), cast.ToInt64(gradeId)); err != nil {
-		res.FailResToCByMsg(c, err.Error())
-		return
-	}
-
-	//4.返回
-	res.SuccessResToC(c, res.DeleteSuccess, nil)
 }

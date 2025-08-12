@@ -62,6 +62,9 @@ func initModelRouter() {
 	//6.定义v1-年级管理-年级路由组
 	grade.InitGradeRouter(v1, tokenHandler)
 
-	//7.定义v1-班级管理-班级路由组
+	//7.定义v1-年级管理-年级-学年关联路由组
+	grade.InitGradeYearRouter(v1, tokenHandler)
+
+	//8.定义v1-班级管理-班级路由组
 	class.InitClassRouter(v1, tokenHandler)
 }
